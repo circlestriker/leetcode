@@ -785,7 +785,7 @@ public:
       cnt++;
       if(cnt<N-1)
         len[nod] = -1;
-      if(cnt==N-1)
+      if(cnt==N)
         return len[nod];
     }
     return -1;
