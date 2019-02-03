@@ -783,7 +783,7 @@ public:
       	    }
       }
       cnt++;
-      if(cnt<N-1)
+      if(cnt<=N-1)
         len[nod] = -1;
       if(cnt==N)
         return len[nod];
@@ -793,7 +793,7 @@ public:
 };
 *** note
 when v is added, the shortest path to v is found.
-the last added node has the longest shortest path.//wrong
+the last added node has the longest shortest path.//right
 ** h793 https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
 5 10 15 20 25 6*5 7*5 8*5 9*5 10*5
 take attention to 5^2,5^3,5^4
