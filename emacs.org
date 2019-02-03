@@ -1098,7 +1098,8 @@ assume v is one of u's childer, when DFS(v) returns, we get min(v), compare all 
 so one DFS is enough
 ** ch24
 *** 24.3-3
-
+if do not Relax on the last vertex, still correct.
+because shortest path to last vertex is the longest one.
 ** B
 B.2 a和b可能无共同祖先,故是partial order
 * csapp

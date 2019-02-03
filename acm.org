@@ -794,6 +794,7 @@ public:
 *** note
 when v is added, the shortest path to v is found.
 the last added node has the longest shortest path.//right
+if u is added to S before v, then shortest path to u is shorter than that to v
 ** h793 https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
 5 10 15 20 25 6*5 7*5 8*5 9*5 10*5
 take attention to 5^2,5^3,5^4
