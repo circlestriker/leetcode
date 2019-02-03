@@ -1,0 +1,1131 @@
+#+STARTUP: showall
+
+* emacs
+(require 'diminish)
+;; Hide jiggle-mode lighter from mode line
+(diminish 'jiggle-mode)
+;; Replace abbrev-mode lighter with "Abv"
+(diminish 'abbrev-mode "Abv")
+
+Symbol's function definition is void: projectile-mode
+
+** evil
+显示evil搜索历史
+M-x RET customize-variable RET evil-search-module RET)
+** dired
+http://pragmaticemacs.com/emacs/dired-marking-copying-moving-and-deleting-files/
+dired-do-search
+m
+u
+ * s //mark all
+ * t //unmark all
+U all
+all 确认全部删除
+
+** purcell配置
+maybe-require-package
+是符合某个条件时加载某package.比如版本>=25.1时安装magit
+
+有recentf
+
+
+** magit
+RET     (magit-show-commit) This command shows the commit that last touched the line at point.
+
+b b  切换分支
+
+reflog可以查看被删的提交
+*** status下
+c c 提交
+$ 查看进度
+l l log
+s
+S stage all
+U unstage all
+
+** php
+vue-mode导致php文件无法=号自动对齐。删掉即可。
+vue在web-mode的自动补全
+http://quanweili.com/2018/03/01/emacs-lsp-vue.html
+
+谢天谢地，我们可以使用渴求式加载来减少该操作到2次查询。当查询的时候，可以使用 with 方法指定应该被渴求式加载的关联关系：
+http://laravelacademy.org/post/6996.html
+
+升级到emacs25.1, 报php-mode错误, 代码无法高亮了。
+uninstall php-mode后重装即可
+
+install php-mode
+M-x package-refresh-contents
+M-x package-install php-mode 
+不需要加  (require 'php-mode)
+
+ all you need to do is download the php-mode.el file, place it inside your load-path, and optionally add (require 'php-mode) to your Emacs configuration to automatically enable PHP Mode whenever you open a PHP file.
+
+*** xdebug 调试php
+https://github.com/ahungry/geben
+
+https://xdebug.org/wizard.php
+这里看要哪个版本
+
+git clone https://github.com/xdebug/xdebug.git
+./rebuild.sh
+zend_extension="xdebug.so" 放在[CLI Server]前
+
+https://github.com/ahungry/geben
+You can now hop over to emacs, and enable the geben listener (default port 9000) by running M-x geben.
+ php -d xdebug.remote_enable=on \
+     -d xdebug.remote_host=127.0.0.1 \
+     -d xdebug.remote_port=9000 \
+     -d xdebug.remote_handler=dbgp \
+     -d xdebug.idekey=geben \
+     -d xdebug.remote_autostart=On \
+     gebenTest.php
+
+下面配置写php.init就可以调试网家页面的php了
+xdebug.remote_enable=on       
+xdebug.remote_host=127.0.0.1  
+xdebug.remote_port = 9000     
+xdebug.remote_handler=dbgp    
+xdebug.idekey=geben           
+xdebug.remote_autostart=On
+
+php --info
+再搜php.ini就知道该文件路径了比如:Loaded Configuration File => /etc/php/7.0/cli/php.ini
+
+php -version 看有没出xdebug
+
+M-x geben起启动geben, 监听9000
+
+phpstorm
+https://www.cnblogs.com/spareribs/p/7084828.html
+vi /usr/local/etc/php/7.1/php.ini
+
+按这个配置是可以成功调试的
+https://www.jianshu.com/p/3fe69df5d6de
+之前没成功是因为
+Language & Frameworks->PHP
+这里的language level没选对。
+phpstorm默认从composer.json导入language level, >=5.6, 导入的结果就是5.6, 导致和实际的7.1对不上。
+解决:点language level右侧的..., 不要勾选"从composer.json导入"
+
+WebSocket是一个持久化的协议，这是相对于http非持久化来说的。举个简单的例子，http1.0的生命周期是以request作为界定的，也就是一个request，一个response，对于http来说，本次client与server的会话到此结束；而在http1.1中，稍微有所改进，即添加了keep-alive，也就是在一个http连接中可以进行多个request请求和多个response接受操作。然而在实时通信中，并没有多大的作用，http只能由client发起请求，server才能返回信息，即server不能主动向client推送信息，无法满足实时通信的要求。而WebSocket可以进行持久化连接，即client只需进行一次握手，成功后即可持续进行数据通信，值得关注的是WebSocket实现client与server之间全双工通信，即server端有数据更新时可以主动推送给client端。
+
+** 插件安装
+*** 代码跳转ggtags
+apt-get install global
+使用M-x ggtags-mode或者加入.emacs文件中开启ggtags，即可使用
+
+ggtags是global前端,emacs要使用必须安装global
+1.安装ctags/global
+# brew install ctags //不用ctags后端就不用安装这个
+# brew install global
+
+apt-get install global
+
+2.安装ggtags  是tag system
+ M-x list-packages
+ 搜索ggtags并安装install
+ 
+3.ggtags创建索引方式
+<1>.M-x ggtags-find-tag-dwim 
+注意：Use `ctags' backend? (yes or no) 选择no
+<2>.
+# gtags
+ 
+4.浏览代码
+ggtags-find-definition
+ggtags-find-reference
+ggtags-find-other-symbol
+ggtags-find-tag-continue
+
+*** ido
+ido-find-file 快速搜索文件
+// 根目录
+~/ home目录
+*** sql
+M-x sql-mysql 
+配置文件加:
+(setq sql-mysql-login-params
+      '((user :default "postgres")
+        (database :default "postgres")
+        (server :default "localhost")
+        (port :default 5432)))
+    
+*** 其他
+Copy from Emacs to OS X clipboard:
+select region then M-| pbcopy RET
+Paste from OS X clipboard to Emacs:
+C-u M-| pbpaste RET (replaces current region if it exists)
+
+query-replace  !表示全部替换
+
+(setq sql-mysql-login-params
+      '((user :default "develop")
+        (password :default "develop@2018")
+        (database :default "mp_test")
+        (server :default "rm-bp1p400a6bjn2c44p931.mysql.rds.aliyuncs.com")
+        (port :default 3306)))
+
+window-number.el,只要按"M-NUM"就可以了.
+
+查看有哪些包
+package-list-packages
+找到后回车, 找到install的地方再回车
+
+find-file-in-project
+用evil就加这个:
+(defun ffip-diff-mode-hook-setup ()
+    (evil-local-set-key 'normal "p" 'diff-hunk-prev)
+    (evil-local-set-key 'normal "n" 'diff-hunk-next)
+    (evil-local-set-key 'normal "P" 'diff-file-prev)
+    (evil-local-set-key 'normal "N" 'diff-file-next)
+    (evil-local-set-key 'normal (kbd "RET") 'ffip-diff-find-file)
+    (evil-local-set-key 'normal "o" 'ffip-diff-find-file))
+(add-hook 'ffip-diff-mode-hook 'ffip-diff-mode-hook-setup)
+
+
+M-x package-install [RET] auto-complete [RET]
+
+通常，emacs会优先加载.emacs，如果找不到，并且存在文件夹.emacs.d，会尝试加载其中的init.el
+
+https://github.com/purcell/emacs.d
+这个配置要生效的话, 需要把自己之前的.emacs删除
+
+
+
+调试python
+To debug a script run the Emacs command “M-x pdb” and invoke Python’s pdb as “python -m pdb foo.py”
+
+
+** linux安装emacs
+sudo wget ftp://ftp.gnu.org/gnu/emacs/emacs-25.3.tar.gz 
+tar zxvf emacs-25.3.tar.gz 
+cd emacs-25.3 
+./configure 
+make && make install
+
+*** ubuntu
+如果报错就再执行 (直接按提示=no不安装这些也能使用, 以后需要这些库时再重装即可)
+apt-get install libgtk2.0-dev libxpm-dev libjpeg62-dev libgif-dev libncurses5-dev libgnutls-dev -y
+libtiff4-dev 这个可以不装:
+./configure --with-tiff=no
+
+linux下复制到剪贴板
+(setq x-select-enable-clipboard t)
+
+*** centos
+yum install gcc
+
+yum install gtk2 gtk2-devel gtk2-devel-docs
+sudo yum install libXpm libXpm-devel
+sudo yum install libjpeg libjpeg-devel
+yum install giflib*
+sudo yum install libungif libungif-devel
+sudo yum install libtiff libtiff-devel
+sudo yum install ncurses-devel
+
+一句搞定:
+sudo yum install gcc* glib* gtk* ncurses* libXpm* giflib* libjpeg* libtiff* libpng* -y
+
+** 其他
+A history of copied text is called “kill ring”, stored in the variable kill-ring.
+If you prefer standard keys such as 【Ctrl+c】 for copy, 【Ctrl+x】 for cut 【Ctrl+v】 for paste, then turn on cua-mode. Put this in your init:
+;; use standard keys for undo cut copy paste
+(cua-mode 1)
+
+you can view the entire contents of the kill ring with C-h v kill-ring.
+
+M-x imenu
+调到某函数
+tab提示补全
+两次提示说明有二级标题
+
+M-x auto-revert-tail-mode
+自动刷新文件
+
+M-x keep-lines<CR>{pattern}<CR>
+
+
+查找默认情况下查找是不区分大小写的，当时如果你输入了一个以上大写字母的话，就区分大小写了，因为它感觉你在乎大小写。
+occur也是这样
+
+M-x multi-occur会让你选择要在哪些buffer中进行内容匹配
+M-x multi-occur-in-matching-buffers会在buffer name符合某正则的buffer中进行内容匹配
+
+远程打开文件
+/ssh:root@ip:/home/wj/1.txt
+/ssh:root@192.168.0.195:/workspace/www/mp-api/current/storage/logs
+/ssh:root@192.168.0.196:/workspace/www/mp-api/current/storage/logs
+/ssh:root@192.168.0.194:/workspace/www/mp-api/current/storage/logs
+/ssh:root@192.168.0.205:/workspace/www/mp-api/current/storage/logs
+/ssh:root@192.168.0.206:/workspace/www/mp-api/current/storage/logs
+C-x C-f时前面要//
+
+/workspace/www/mp-api/current/storage/logs
+
+M-c 切换大小写敏感。
+M-e 编辑要查找的内容
+
+  M-x which-function-mode RET
+持久化:  (which-function-mode 1)
+
+
+;;设置默认搜索路径
+(defadvice find-name-dired (before find-name-dired-with-default-directory activate)
+  "change the argument reading"
+  (interactive
+   (let ((default-directory "/Users/win/wj/wx-admin-platform"))
+     (call-interactively 'get-args-for-my-find-name-dired))))
+
+(defun get-args-for-my-find-name-dired (dir pattern)
+  (interactive "DFind-name (directory): \nsFind-name (filename wildcard): ")
+  (list dir pattern))
+;;设置默认搜索路径
+
+
+显示行号
+(global-linum-mode 1)
+
+查看初始化文件  C-h v user-init-file.
+
+ido是可以搜索到不在当前目录下的文件的.比如输入linux.txt . 貌似只能搜打开过的 
+
+
+dired在24版本后自带
+搜索文件用dired:
+M-x find-name-dired  //搜文件名
+M-x find-grep-dired  //文件内容全局搜
+M-x find-dired //执行find命令
+
+用occur命令列出函数名
+
+Purcell的配置c-x b里有最近文件了
+
+option改为meta:profiles-keys-左边的alt改为esc+
+
+搜索文件夹下的文件内容
+M-x rgrep
+
+括号配对高亮
+(show-paren-mode 1)
+
+;;start mac设置剪切板共享 
+(defun copy-from-osx () 
+(shell-command-to-string "pbpaste")) 
+(defun paste-to-osx (text &optional push) 
+(let ((process-connection-type nil)) 
+(let ((proc (start-process"pbcopy" "*Messages*" "pbcopy"))) 
+(process-send-string proc text) 
+(process-send-eof proc)))) 
+(setq interprogram-cut-function 'paste-to-osx) 
+(setq interprogram-paste-function 'copy-from-osx) 
+;;end 设置剪切板共享 
+  
+;; 显示行号
+(global-linum-mode 1)
+
+发现 Emacs24以后的版本都拥有比较强大的 主题管理功能，
+M-x customize-themes
+光标放[]里回车，选择manoj-dark
+
+linux安装
+yum install emacs
+
+
+;; Emacs在每个buffer中都有一组内置的命令
+;; 而当你激活某种特定的模式时，就可以使用相应的命令
+;; 这里我们使用`lisp-interaction-mode'
+
+;; `C-j' 会在buffer中插入当前运算的结果
+
+;; 而`C-xC-e' 则会在emacs最底部显示结果，也就是被称作"minibuffer"的区域
+;; 为了避免把我们的buffer填满无用的结果，我们以后会一直用`C-xC-e'
+
+C-x [character]
+mode-independent keybindings.
+C-c …
+mode-dependent keybindings.
+C-c [character]
+user-reserved keybindings.
+
+(setq make-backup-files nil)
+
+emacs -version
+
+关闭kill当前buffer
+C-x k
+
+刷新
+M-x revert-buffer
+
+显示行
+M-x linenum-mode
+
+redo
+If you undo, and then do a non-editing command such as C-f, then the next undo will undo the undo, resulting in a redo.
+
+显示最近文件
+(recentf-mode 1)
+(setq recentf-max-menu-items 25)
+(global-set-key "\C-x\ \C-r" 'recentf-open-files)
+** 问题
+换行
+自动缩进
+导航到上次看的位置
+C-u C-spc
+全局word匹配
+** 标记
+C-Space
+复制粘贴: c+space 开始标记; M+w复制;c+y粘贴到其他文件
+c+w是删除
+
+* org
+自动换行
+(add-hook 'org-mode-hook (lambda () (setq truncate-lines nil)))
+
+C-c C-s 开始时间
+C-c C-d 结束时间
+
+M-x org-mode
+当前页面用org
+
+MY PROJECT -*- mode: org -*- 
+头部添加。使得文件打开就是org
+
+C-c C-t
+完成
+
+同时管理多个org:
+(setq org-agenda-files (list "~/org/work.org"
+                             "~/org/school.org" 
+                             "~/org/home.org"))
+
+S+tab 收展headline
+
+TAB / S-TAB – (un )fold
+M-up/down – move a headline up or down
+M-left/right – promote or demote a headline
+M-RET – insert a new headline
+
+S-left/right – cycle workflow
+C-c / t – show TODOs in current document
+** 日程
+(define-key global-map "\C-ca" 'org-agenda)
+
+
+C-c . – add date
+** 表格
+M-<right> 移动列
+M-<down>  移动行
+S-M-<right> 插入列 3个键依次按
+S-M-<down> 插入行
+
+* lisp
+** 优点
+面向语言编程
+可以自己设计语言、范式, 能随意抽象问题、解决问题，所想即所得
+更快更灵活地解决问题
+易扩展、易复用
+hook的理解: https://emacs-china.org/t/topic/4815
+** 缺点
+Emacs Lisp 先天的single-threaded 限制，效率本身并不优秀
+
+mit sicp主站
+https://mitpress.mit.edu/sicp
+http://sarabander.github.io/sicp/html/index.xhtml#SEC_Contents
+答案:
+http://community.schemewiki.org/?SICP-Solutions
+https://github.com/qiao/sicp-solutions
+
+scheme安装
+https://www.gnu.org/software/mit-scheme/documentation/mit-scheme-user/Unix-Installation.html
+然后任何目录执行scheme即可
+
+在 MIT-Scheme 中输入 code 非常麻烦，光标不能回退和上下移动，所以比较简单的方法就是运行已经写完的文件：
+$: scheme -load yourfile.scm
+ctrl + g 跳出错误
+ctrl + z 跳出 MIT-Scheme
+
+函数定义不区分大小写
+1 ]=> (define A (make-accumulator 5))
+;Value: a
+** emacs里运行scheme
+control-x control-e, which evaluates the s-expression just before the cursor
+
+启动scheme
+M-x run-scheme
+
+load scheme文件
+control-c control-l
+
+** 目标1 The picture language
+类似策略模式: painter是个策略
+beside类似复合模式
+flip-vert类似桥接or适配器模式?
+** 终极目标:自己针对特定问题, 设计lisp方言, 实现编译器, 更好地解决该问题. 没掌握编译原理限制了想象力和发展
+** 笔记
+
+学lisp
+http://steve-yegge.blogspot.com/2008/01/emergency-elisp.html
+
+cond定义eval导致无法发现新的表达式。大部分lisp的实现是可以的。
+
+accumulate产生的是什么结果,和op有关. 可能是sum也可能list。
+有了accumulate为何还要map? //因为map产生的一定还是list
+
+
+map是把proc映射到seq
+flatmap产生的结果是pair的seq? //flatmap的结果由accumulate决定, 也是和op有关
+append是对list操作
+append是flatmap的op, 故flatmap的结果是list
+*** ch2
+数据抽象:“principle of least commitment.”允许我们再最后时刻选择数据的表现形式，从而获得最好的灵活性
+
+ex2.20解释了点号'.'是如何表示过程的"可变长度"参数列表的
+*** ch3
+**** TODO 3.4
+A more formal way to express this idea is to say that concurrent programs are inherently nondeterministic. That is, they are described not by single-valued functions, but by functions whose results are sets of possible values. In 4.3 we will study a language for expressing nondeterministic computations.
+如何表示非确定性计算?
+
+*** ch4
+- Similarly, writing a Lisp evaluator in C produces a C program that can execute any Lisp program. The deep idea here is that any evaluator can emulate any other. 
+  01二进制就2个数, 组合起来却可以描述无数的可能
+
+*** ch5
+We should keep in mind, however, that data-path design is crucial in designing real machines.
+
+how these returned values are passed from call to call;
+
+how some recursive procedures generate iterative processes (that is, are evaluated using constant space) whereas other recursive procedures generate recursive processes. 
+*** 2.4.3
+策略模式:对修改关闭, 对扩展开放
+'(rectangular) type是list支持多个参数
+牺牲可读性换来灵活性扩展性
+
+** sicp习题
+*** ex1.12
+*** ex1.35
+*** DONE ex1.41
+(define (double f)  (lambda (x) (f (f x))))
+(define (inc x) (+ 1 x))
+
+(((double (double double)) inc) 5) 
+(((double (lambda (x) (double (double x)))) inc) 5) 
+((((lambda (y)  (lambda (x) (double (double x)))) (lambda (x) (double (double x)))) inc)) 5) 
+((double (double (double (double inc)))) 5)
+4个double过程作用在inc, 变成16个inc过程
+5+16=21
+*** ex1.42
+(define (compose f g) (lambda (x) (f (g x))))
+(define (square x) (* x x))
+*** ex1.43
+(define (repeated f n) 
+(cond ((= n 1) f)
+      ((= n 0) f)
+      ((= n 2) (compose f f))
+      (else (repeated f n-1))))
+
+*** DONE ex1.44
+(define dx 0.00001) 
+(define (smooth f) (lambda (x) (/ (+ (f (- x dx)) (f x) (f (+ x dx))) 3)))
+(define (n-fold-smooth f n) (lambda (f) (repeated smooth n) f))
+(define (n-fold-smooth f n) (repeated smooth n) )
+
+*** ex2.23
+for-each不保证生成list. 可以是任意返回值
+*** ex2.24
+*** ex2.25
+(define a (list 1 (list 2 (list 3 (list 4 (list 5 (list 6 7)))))))
+
+(car (cdr (car (cdr (car (cdr (car (cdr (car (cdr (car (cdr a))))))))))))
+(car (car ((7))))
+(car (cdr (cdr (cdr (cdr (cdr (cdr (1 (2 (3 (4 (5 (6 7)))))))))))))
+*** ex2.32
+(lamda (l) (cons (car s) l)) 
+*** ex2.53
+(a b c)
+((george))
+((y1 y2)) ;;因为car取出的是一个元素, cdr取出后还是一个list
+(y1 y2)
+#f
+(red shoes blue socks)
+
+*** ex2.54
+(define (equal? la lb)
+ (cond ((null? la) false)
+       ((eq? (car la) (car lb))
+       (equal? (cdr la) (cdr lb))
+       else false)
+*** ex2.73
+a. 从形式上,numberf和viariable无法分离出operator和operands
+b.
+(define (install-deriv-sum)
+;;internal
+  (define (deriv exp) 
+        (make-sum (deriv (addend exp) var)
+                  (deriv (augend exp) var)))
+;;to the rest
+(define (tag x) (attach-tag '+ x)
+(put 'deriv + derive)
+'done)
+//////////////////
+(define (install-drive-product)
+;;internal
+  (define (deriv exp)
+     (make-sum
+       (make-product (multiplier exp)
+         		     (deriv (multiplicand exp) var))
+       (make-product (deriv (multiplier exp) var)
+  					 (multiplicand exp))
+;;to the rest
+(define (tag x) (attach-tag '* x)
+(put 'deriv * derive)
+'done)
+//tag是给数据附加了标签
+
+data-directed的好处:
+更好的内聚、模块化
+避免命名冲突
+
+We use the list (rectangular) rather than the symbol rectangular to allow for the possibility of operations with multiple arguments, not all of the same type.
+//list (rectangular) 增加了灵活性
+
+Apply applies the procedure, using the elements in the list as arguments.
+
+code as data的好处是:讲proc(code)作为返回值(data)返回, 或作为参数(data)传入，大大提高了抽象能力。
+
+状态模式就是data directed的
+*** ex2.75
+(define (make-from-mag-ang m a)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part) (* m (cos a)))
+          ((eq? op 'imag-part) (* m (sin a)))
+          ((eq? op 'magnitude) m)
+          ((eq? op 'angle) a)
+          (else
+          (error "unknown op - MAKE-FROM-MAG-ANG" op))))
+dispatch)
+ 
+*** DONE ex2.76
+要经常add type, 用data-directed，新增不用动已有type的代码
+
+add type:
+explicit:every cond must be modifid, not good.
+data-directed: do not need to modify the old code, good for add type.
+message-passing: do not need to modify the old code, good for add type.
+add op:
+explicit: do not need to touch the old code, good.
+data-directed: need to modify internal procedure and interface code, seems not good.
+message-passing: need to modify internal code for all existing type.
+*** ex3.1
+(define (make-accumulator init-val)
+  (let ((sum init-val))
+    (lambda (amount)
+      (begin (set! sum (+ sum amount)) sum))))
+*** ex3.38
+1) 3!=6 事务执行
+2) interleaved是并发
+*** DONE ex3.9
+1)global env->factorial ->(parameters:n;  body:  
+(if (= n 1)
+      1
+      (* n (factorial (- n 1)))))
+)
+
+E1: n=6 (* 6 (f (- 6 1)))
+E2: n=5 (* 6 (* 5 (- 5 1)))
+//答案里E2没有6, 6是存寄存器了?
+
+2)
+可以看出递归的临时结果需要放寄存器，而迭代的结果直接存在过程中了
+
+*** DONE ex4.1
+如何判断是application?
+//不是eval定义里上面的表达式,就认为是application
+a+1为例, 是application, apply时, list-of-values是[a,1].
+
+let 语句会先执行evaluation?
+//let先执行,再执行cons的
+*** DONE ex4.2
+(define (text-of-quotation exp)
+  (cadr exp))
+cadr是先cdr, 再car
+
+a. 改变eval的顺序后，define被当做了变量variabe解析，但是环境env里找不到这个变量，就报错了。
+2016-11-17 14:54:38
+//define是被当做operator了
+b. (define (application? exp) (tagged-list? exp 'call))
+(define (operator exp) (cadr exp))
+(define (operands exp) (cddr exp))
+*** TODO ex4.3
+要想清楚在怎样的data上dispatch
+
+如何tag?
+type作为tag
+
+op是什么?
+//eval 
+
+type是什么?
+//(car exp), car of a compound expression. 比如if, lambda
+
+env就是运行时环境
+
+
+(define (eval exp env)
+  (cond 
+*** TODO ex5.1
+*** TODO ex5.2
+
+** Q&A
+lisp为什么有单线程限制
+为什么说Lisp性能比较差
+*** ch4
+- 为什么要eval和apply两个, 不能1个? 能否合并?
+eval是对procedure进行拆分
+apply是执行
+
+- an implemented language and an implementation language. 有何区别
+
+- 流和惰性求值有什么关系?
+
+*** ch5
+It is more verbose for large machines, because complete descriptions of the data-path elements are repeated whenever the elements are mentioned in the controller instruction sequence.
+- 相当于代码重复?
+
+* vim
+CTRL-O	Go to [count] Older cursor position in jump list 
+<Tab>	or	*CTRL-I* *<Tab>* 
+//在evil也能用
+
+g;
+//normal模式, 跳回上次修改的位置
+
+块替换要用y和p。不能ctrl-c, 在vim选中后ctrl v
+
+Ctrl-z 命令将当前的 Vi/Vim 进程放到后台执行，之后 shell 环境即可为你所用；fg 命令则将位于后台的 Vi/Vim 进程放到前台执行，这样我们就再次进入 Vi/Vim 操作界面并恢复到原先的编辑状态。
+
+alias vi='vim'
+
+去掉重复行
+:sort u
+
+
+"+y  // 复制当前行到剪切板  “+对应系统剪贴板, 不需要事先输入冒号
+"+p   // 将剪切板内容粘贴到光标后面
+mac: copy selected part: visually select text(type v or V in normal mode) and type :w !pbcopy
+
+"ayy  // 复制当前行到寄存器 a
+"ap   // 将寄存器 a 中的内容粘贴到光标后面
+
+出现次数: first press * to search for the current word, then enter :%s///gn to count all occurrences of that word.
+
+在所有行中查找 字符串 出现的次数 :%s/字符串/&/gn 
+:g//   lists all lines containing the last search pattern
+
+:g/pattern/y A  //过滤后复制。A是寄存器名
+qaq:g/pattern/y A
+:g/泡泡\|检测   //包含其中之一的行
+
+/A.*B 查找包含A和B的行
+
+vim 查找选中的内容 : v，选中，y，/, Ctrl+r 0, 回车
+
+复制全文: gg yG
+
+80i* ESC  插入80个*
+
+文件格式改为unix的
+set ff=unix
+=========
+替换:
+:%s/\t/\r/g   #tab替换为换行
+
+:%s/字符串/gn   统计出现次数并替换
+
+把一个很长的一行按空格分为多行 :%s/\ +/\r/g
+
+
+以下命令将文中所有的字符串idiots替换成managers：
+:1,$s/idiots/manages/g
+通常我们会在命令中使用%指代整个文件做为替换范围：
+:%s/search/replace/g
+以下命令指定只在第5至第15行间进行替换:
+:5,15s/dog/cat/g
+以下命令指定只在当前行至文件结尾间进行替换:
+:.,$s/dog/cat/g
+以下命令指定只在后续9行内进行替换:
+:.,.+8s/dog/cat/g
+你还可以将特定字符做为替换范围。比如，将SQL语句从FROM至分号部分中的所有等号（=）替换为不等号（<>）：
+:/FROM/,/;/s/=/<>/g
+在可视化模式下，首先选择替换范围, 然后输入:进入命令模式，就可以利用s命令在选中的范围内进行文本替换。
+
+删除文章中的空行
+:g/^s*$/d
+简单解释一下：
+g ：全区命令
+/ ：分隔符
+^s*$ ：匹配空行，其中^表示行首，s表示空字符，包括空格和制表符，*重复0到n个前面的字符，$表示行尾。连起来就是匹配只有空字符的行，也就是空行。
+/d ：删除该行
+
+:1,50000s/\n/;/
+
+:g/text/d   删除包含text的行
+
+删除每行第一个字符    :%s/^.//g
+
+
+========
+:set autoindent 如果在一行的开头输入空格或制表符，那么后续的新行将会缩进到相同的位置
+简写:set ai 和 :set noai
+:set shiftwidth=4 把每级缩进设置为四个空格
+:set ai sw=4 在一个命令中打开缩进并设置缩进级别。
+======
+
+每行的行首都添加一个字符串：%s/^/要插入的字符串
+
+每行的行尾都添加一个字符串：%s/$/要插入的字符串
+
+:n,$s/vivian/sky/ 替换第 n 行开始到最后一行中每一行的第一个 vivian 为 sky
+
+======缩进===
+命令状态下对当前行用== （连按=两次）, 或对多行用n==（n是自然数）
+=======
+
+visual mode: esc取消visual模式;gv选中上次的；o光标去到另一端
+
+精确匹配查找单词
+如果你输入 "/the"，你也可能找到 "there"。要找到以 "the" 结尾的单词，可以用：
+/the\> "\>" 是一个特殊的记号，表示只匹配单词末尾。类似地，"\<" 只匹配单词的开头。
+这样，要匹配一个完整的单词 "the"，只需：/\<the\>
+
+
+:g/ERROR   过滤  
+:g!/ERROR  反过滤
+
+q: //显示最近命令列表
+
+* mac
+不必按Fn:
+直接进入 系统设置 -> 键盘 -> 使用F1、F2等键为标准功能键（选择后按下Fn来使用特殊功能） 打上勾即可 。
+
+
+查看监听端口
+sudo lsof -i -P | grep -i "listen"
+
+重启
+nginx -s reload
+
+** 升级emacs
+安装dmg版(universal binary)
+删除自带的22版本:
+   重启进入恢复模式(开机时按住command + R)
+   打开terminal(点击Utilities下拉菜单，选择terminal)
+   在terminal中执行命令`csrutil disable; reboot`
+$ sudo rm /usr/bin/emacs
+$ sudo rm -rf /usr/share/emacs
+
+在/etc/profile添加
+alias emacs=新安装的Emacs.app的路径(查看包内容可以找到)
+* design pattern
+** 原则
+*** 最朴素的原则: 美是一种指引   
+*** 分离、封装变化:把易变的从不易变的代码中分离出来
+*** 对扩展开放，对修改关闭
+*** 面向接口(或super type)编程, 而不是面向实现
+面向实现的坏处:强依赖实现, 需求变化就要修改较多代码,不灵活
+面向接口好处:可以动态替换行为
+super type:可以是abstract class, 也可以是interface
+** strategy
+继承的好处是代码复用
+继承不好实现基于组合的设计
+继承导致要覆写很多从基类继承的空函数
+
+
+接口可以实现基于组合的设计
+但是接口的实现不利于代码复用
+
+把行为抽象成单独的接口和类, 按需添加
+能在运行时动态改变行为
+
+chatgame的视频组件, 用了状态模式后, 还是有重复代码.这个重复代码可以用策略模式提高重用性。
+绘制self预览, 只在呼出、接通状态需要实现。
+可以动态添加和删除行为, 比如美颜
+** cmd
+用于何种场景: 
+undo(涉及一系列动作的场景); 
+线程池(lavavel的队列分发任务就是命令模式)
+GUI按钮
+线程模型设计(如跨平台im底层线程模型)
+* clrs
+http://sites.math.rutgers.edu/~ajl213/CLRS/CLRS.html
+https://walkccc.github.io/CLRS/
+https://github.com/gzc/CLRS
+** chp1
+1.2-1
+1.2-2
+1.2-3
+n=15
+
+** chp2
+2.1-1 to 2.1-4
+2.2-* //*: all has been done.
+2.2-2
+O(n^2),O(n^2)
+?2-1
+2-2
+** chp3
+3.1-6
+** chp4
+? 4-6
+4-7
+ab
+c:
+random select row r1<r2, if f(r1) > f(r2), we will have A[r1, f(r1)]+A[r2,f(r2)]<A[r1, f(r2)]+A[r2,f(r1)], which cause conflict with the condition.
+d:
+nlogm (similar to quicksort)
+** chp5
+*** ex
+**** 5.1-1
+**** 5.1-2
+rand(a,b) = a + (b-a)*rand(0,1)
+O(1)
+rand(0,1) only produces 0 and 1, so upper answer is wrong.
+the following solution may not correct, because [0,1,2], 1 will be chosen more probably then 0 and 2
+RANDOM(a, b)
+    if a == b
+        return a
+    mid = (a + b) / 2
+    r = RANDOM(0, 1)
+    if r == 0
+        return RANDOM(a, floor(mid))
+    else return RANDOM(ceil(mid), b)
+**** 5.1-3
+00: (1-p)^2
+01: (1-p)p
+10: p(1-p)
+11: pp
+if out put 00 or 11, just discard it
+if output 01, we get 0
+if output 10, we get 1
+O(1 / (2p(1-p)) )
+**** 5.2-3
+1*1/n+2*1/n+...+n*1/n = (n+1)/2
+dice means 6-face, so n = 6, so it is 3.5.
+n dice throw sum's expectation:
+E[x]=sum(E[xii])=n*3.5
+**** 5.2-5
+X=X1+X2+...+Xn
+Xk=I1+I2+...+Ik (I1 means k with 1 is a inversion)
+Ik=0, I1=1/2,I2=1/2,
+so Xk = (k-1)/2
+X=(1-1)/2+(2-1)/2+...+(n-1)/2=(n-1)n/4
+**** 5.4-1
+assume 355days/year.
+1)178+1 people(1 is yourself).
+2)n*n-n>=355*177
+
+** chp6
+6.1-*
+
+6.5-*
+** ch7
+*** ex
+**** DONE 
+7.4-2
+7.4-4 ? probability analysis
+7.6
+if [a1,b1] and [a2,b2] overlap, we set these 2 element as equal.
+while quicksorting, put those internals equaling to pivot together in 2 place(head and tail).
+after a round of partition is finished, put those equal ones to the middle.
+7.8
+*************
+chp8
+8-6
+a,c,d
+b ?
+*************'
+chp10
+10.1-*
+10.2-1 to 10.2-4
+10.2-7
+10.2-8
+***************
+chp12
+12.2-2
+12.2-3 ？
+12.2-6
+12.3-3
+worst: O(n^2)
+best: ? 
+ 
+*************
+chp13
+13.1-1 ?
+ 
+13.2-1
+//RIGHT-ROTATE(T,y)
+x = y.left
+y.left = x.right
+if(x.right != NIL(T))
+  p(x.right) = y
+p(x) = p(y)
+if( p(y) == NIL(T) )
+  root = x
+else
+  if ( y == p(y).left )
+    p(y).left = x
+  else
+    p(y).right = x
+x.right = y
+p(y) = x
+ 
+13.2-2
+13.2-3
+a: the depth of a is added by 1.
+b: stay the same.
+c: substracted by 1.
+13.2-4
+one right rotation can add one node to the right-going chain, so at most n - 1 right rotations suffice to transform the tree into a right-going chain.
+and, left rotation and right rotation are symmetric.
+so, for any 2 n-node binary search tree A and B.
+A->right-going chain->B can be done in O(n).
+13.2-5 ?
+******************
+chp15
+15.4-2
+compare xi and yi.
+then compare c[i-1,j] and c[i,j-1].
+15.4-3
+as figure 15.6, we only need Y[7] to store each row of the matrix. so that we stores c[i-1,j-1] and c[i-1,j].
+and, we only need a integer to store the value c[i,j-1].
+ 
+
+ 
+*******************
+chp18
+In a typical B-tree application, the amount of data handled is so large that all the data do not
+fit into main memory at once.
+18.1-1
+18.1-2
+18.1-3
+   3: rooted with 2,3,4
+18.1-4
+   (2t)^h-1
+****************
+
+**********************
+Given a n*n matrix, whoes elements are all integers.
+now, we need to select n elements in this matrix, so that there are neither 2 elements in a single row nor in a single column, and the sum of
+these n elements must be minimum.
+skill: substract or add the same integer in a row or column would not change the positions of the elements of the result. so we can modify the
+matrix until it contains no negative integers.
+ 
+
+ 
+
+*************************
+
+C.1-1
+
+ 
+
+C.1-4
+
+O: for odd;
+
+E: for even
+
+there are 4 cases:
+
+a: O O O
+
+b: O O E  => sum is even
+
+c: O E E
+
+d: E E E => sum is even
+
+the chances for a, d to happen are the same.
+
+the chances for b, c to happen are the same.
+
+ 
+
+so the answer is C(100,3)/2
+
+ 
+
+C.1-5
+7.1-1
+13;19;9;5;12;8;7;4;21;2;6;11
+9;5;8;7;4;2;6;11;21;13;19;12
+7.1-2
+1 1 1 自己和自己交换。return r
+if(i+1==r) return (p+r)/2;
+modify line 4 of the algorithm to say this: if A[j] ≤ x and j(mod2) =
+(p + 1)(mod2) //这个方法的好处是交换次数少了一半
+7.1-3
+7.1-4: partition的第四行<=改为>=
+** ch9
+*** 9.3
+9 8 7 6 5 
+4 3 2 1 0
+7
+2 = median
+9 8 7 6 5 4 3 2 1 0
+0 8 7 6 5 4 3 9 1 2 
+0 1 7 6 5 4 3 9 8 2 
+0 1 2 6 5 4 3 9 8 7 
+6 5 4 3 9 8 7  i = 2
+6 5 4 3 9 
+8 7 
+4
+8 median = 4
+
+7n/10+6=n-(3n/10-6)
+*** ex
+9.3-3
+
+** ch22
+*** 22.3-7
+用stack可以不用递归
+*** 22.4-1
+p-n-o-s-m-r-y-v-x-w-z-u-q-t
+*** DONE 22-4
+one DFS can find min(u),but there are |V| u.
+assume v is one of u's childer, when DFS(v) returns, we get min(v), compare all childer get min(u).
+so one DFS is enough
+** ch24
+*** 24.3-3
+
+** B
+B.2 a和b可能无共同祖先,故是partial order
+* csapp
+** ch7
+Static Linking: linked by static linker(such as ld); no need to link other object file at run time
+Dynamic Linking:
+* iOS
+** 移动跨平台技术方案
+*** RN
+支持iOS和安卓
+UI渲染、网络请求等均由原生端实现。
+Javascript代码，通过中间层转化为原生控件后再执行
+注意点:由于js代码是运行在独立的JS线程中，所以在js中不能处理耗时的操作，如fetch、图片加载和数据持久化等操作
+好处: 熟悉Web前端开发的技术人员只需很少的学习就可以进入移动应用开发领域，并可以在不牺牲用户体验的前提下提高开发效率。
+能调用swift/java等写的自定义组件
+坏处:
+没明显坏处
+*** weex
+Weex框架中最核心的部分就是JavaScript Runtime
+由于Android、iOS和H5等终端最终使用的是native渲染引擎，也就是说使用同一套代码在不同终端上展示的样式是相同的，并且Weex使用native引擎渲染的是native组件，所以在性能上比传统的WebView方案要好很多。
+native组件是指web组件, 不是原生iOS组件
+
+好处:iOSAPP发布后可以从服务器动态更新功能
+
+坏处:
+社区相对没那么活跃
+不能调用swift/java等写的自定义组件
+*** Flutter
+性能无限接近原生
+相较于RN和Weex使用Javascript作为编程语言与使用平台自身引擎渲染界面不同，Flutter直接选择2D绘图引擎库skia来渲染界面。

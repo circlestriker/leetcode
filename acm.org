@@ -1,0 +1,1487 @@
+* leetcode
+test case first
+ask until the situation is clear
+题目会提示思路
+分析小case找到普遍规律
+test your code
+
+if your method changes when you write the code, delete the old method code all, or you will have hidden bugs.
+#include <iostream>
+
+mc02lwl Lsj 6903
+
+using namespace std;
+** h4 https://leetcode.com/problems/median-of-two-sorted-arrays/
+
+double min(double d1, double d2){
+    return d1<d2?d1:d2;
+}
+double kthNum(int * p1, int start1, int end1, int * p2, int start2, int end2, int k){
+  if(start1 > end1) return p2[start2+k-1];
+  if(start2 > end2) return p1[start1+k-1];
+  if(k == 1) return min(p1[start1], p2[start2]); //1/2==0, is special case
+  int half = k / 2;
+  int half1 = (start1+half-1 > end1) ? INT_MAX : p1[start1+half-1];
+  int half2 = (start2+half-1 > end2) ? INT_MAX : p2[start2+half-1];
+  if(half1 < half2){
+    return kthNum(p1, start1+half, end1, p2, start2, end2, k-half);
+  }else{
+    return kthNum(p1, start1, end1, p2, start2+half, end2, k-half);
+  }
+}
+
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+  int len = nums1Size + nums2Size;
+  if(len % 2 == 0){
+    int l = kthNum(nums1, 0, nums1Size-1, nums2, 0, nums2Size-1, len/2);
+    int r = kthNum(nums1, 0, nums1Size-1, nums2, 0, nums2Size-1, len/2+1);
+    return (l+r)/2.0;
+  }else{
+    int k = len / 2 + 1;
+    return kthNum(nums1, 0, nums1Size-1, nums2, 0, nums2Size-1, k);
+  }
+}
+
+
+9 
+2 3 4 5 6 7
+k=4
+aMid = 1
+bMid = 1
+// set len=size1+size2, we need to find the k=len/2 number
+// recurrsion: always get the (k/2)th number of nums1 and nums2, compare them, throw the smaller part.
+// if (k/2) exceed the length of the current array, it is safe to throw the part of the other part, because current array will be handed when k becomes smaller
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length;
+        int n = nums2.length;
+        int len = m + n;
+        if(len % 2 == 0){
+            double left =  (double)findKthHelper(nums1, 0, nums2, 0, len/2);
+            double right =  (double)findKthHelper(nums1, 0, nums2, 0, len/2 + 1);
+            return (double)(left + right)/2;
+        }else{
+            return findKthHelper(nums1, 0, nums2, 0, len/2 + 1);
+        }
+    }
+    private int findKthHelper(int[] A, int aStart, int[] B, int bStart, int k){
+        if(aStart >= A.length){
+            return B[bStart + k - 1];
+        }
+        if(bStart >= B.length){
+            return A[aStart + k - 1];
+        }
+        if(k == 1){
+            return Math.min(A[aStart], B[bStart]);
+        }
+        int aMid = aStart + k/2 - 1;
+        int bMid = bStart + k/2 - 1;
+        int aVal = aMid >= A.length ? Integer.MAX_VALUE : A[aMid];
+        int bVal = bMid >= B.length ? Integer.MAX_VALUE : B[bMid];
+        if(aVal <= bVal){
+            return findKthHelper(A, aMid + 1, B, bStart, k - k/2);
+        }else{
+            return findKthHelper(A, aStart, B, bMid + 1, k - k/2);
+        }
+    }
+}
+
+middle index in num1 is idx1
+middle index in num2 is idx2
+if num1[idx1] <= num2[idx2], throw the left part of num1 and the right part of num2. and make sure the thrown left and right part has the same count of numbers:len=min(smaller left part, bigger right part)
+方法1:每次丢掉最小的和最大的1/4, 可能在同个数组里, 复杂度也是lgM+lgN.
+方法2:每次丢掉num1的小的1/4,和num2大的1/4, 通过比较考虑中间数的去留.
+[1 2 3 4], idx1=1, left part is (1 2)
+[5 6 7], idx2=1, right part is (6 7) //num1[idx1+1]=3<6 mean there are equal or more (size(num1)+size2(num2))/2 numbers less than 6  
+so throw 1 2 and 6 7, got:
+[3 4] [5]
+[] [1]
+[] [1,2]
+[] [1,2,3]
+[1] [2]
+[1] [2,3,4]
+[1 2 8 9], idx1=1, left is (1)
+[5 6 7], idx2=1, right is (7), because 6<8, so 6 can not be included, which cause 2 cannot be included
+class Solution {
+    public double oneAndArray(int [] n1, int l1, int [] n2, int l2, int r2){
+	  int len = (r2-l2+1)/2;
+	  if((r2-l2+1)%2 == 0){
+	    int left = n2[l2+len-1];  
+	    int right = n2[l2+len];
+	    if(n1[l1]<left)return left;
+	    else if(n1[l1]>right)return right;
+	    else return n1[l1];
+	  }else{//odd
+	    int v1 = n2[l2+len-1], v2 = n2[l2+len], v3 = n2[l2+len+1];
+	    if(n1[l1]<v1)return (v1+v2)/2.0;
+	    else if(n1[l1]>v3)return (v2+v3)/2.0;
+	    else return (v2+n1[l1])/2.0;
+	  }
+    }
+    
+    public double BS(int [] n1, int l1, int r1, int [] n2, int l2, int r2){
+        if(l1 > r1){
+          if((r2-l2+1)%2 == 0){
+            return (n2[l2+(r2-l2+1)/2-1]+n2[l2+(r2-l2+1)/2])/2.0;
+          }else return n2[l2+(r2-l2)/2];
+        }
+        if(l2 > r2){
+          if((r1-l1+1)%2 == 0) return (n1[l1+(r1-l1+1)/2-1]+n1[l1+(r1-l1+1)/2])/2.0;
+          else return n1[l1+(r1-l1)/2];
+        }
+
+        if(l1 == r1 && l2 == r2){
+            return (n1[l1]+n2[l2])/2.0;//todo: may overflow int value
+        }
+	
+        if(l1 == r1){
+	  int len = (r2-l2+1)/2;
+	  if((r2-l2+1)%2 == 0){
+	    int left = n2[l2+len-1];  
+	    int right = n2[l2+len];
+	    if(n1[l1]<left)return left;
+	    else if(n1[l1]>right)return right;
+	    else return n1[l1];
+	  }else{//odd
+	    int v1 = n2[l2+len-1], v2 = n2[l2+len], v3 = n2[l2+len+1];
+	    if(n1[l1]<v1)return (v1+v2)/2.0;
+	    else if(n1[l1]>v3)return (v2+v3)/2.0;
+	    else return (v2+n1[l1])/2.0;
+	  }
+        }
+	if(l2 == r2){
+	  return oneAndArray(n2,l2,n1,l1,r1);
+	}
+
+        int m1 = l1+(r1-l1)/2;
+        int m2 = l2+(r2-l2)/2;
+        if(n1[m1] <= n2[m2]){
+            int smallLen = m1-l1+1;
+            int largeLen = 0;
+            if(n2[m2+1]>=n1[m1+1]){
+              largeLen = r2-m2;
+              int cutLen = Math.min(smallLen, largeLen);
+              return BS(n1, l1+cutLen, r1, n2, l2, r2-cutLen);
+            }
+            else{
+               largeLen = r1-m1;
+               int cutLen = Math.min(smallLen, largeLen);
+               return BS(n1,l1+cutLen, r1-cutLen, n2, l2, r2);
+            }
+        }else{
+          int smallLen = m2-l2+1;
+          int largeLen = 0;
+          if(n2[m2+1]>=n1[m1+1]){
+            largeLen = r2-m2;
+            int cutLen = Math.min(smallLen, largeLen);
+            return BS(n1, l1, r1, n2, l2+cutLen, r2-cutLen);
+          }else{
+            largeLen = r1-m1;
+            int cutLen = Math.min(smallLen, largeLen);
+            return BS(n1, l1, r1-cutLen, n2, l2+cutLen, r2);
+          }
+        }
+    }
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        return BS(nums1, 0, nums1.length-1, nums2, 0, nums2.length-1);
+    }
+}
+
+
+** h10 https://leetcode.com/problems/regular-expression-matching/
+dp[i][j] means s[first i char] matchs with p[first j chars]: only true or false
+1, If p.charAt(j) == s.charAt(i) :  dp[i][j] = dp[i-1][j-1]+1;
+2, If p.charAt(j) == '.' : dp[i][j] = dp[i-1][j-1]+1;
+3, If p.charAt(j) == '*': 
+   here are two sub conditions:
+               1   if p.charAt(j-1) != s.charAt(i) : dp[i][j] = dp[i][j-2]  //in this case, a* only counts as empty
+               2   if p.charAt(j-1) == s.charAt(i) or p.charAt(j-1) == '.': //dp[i][j] can be ture if one of the 3 is true
+                              dp[i][j] = dp[i-1][j]    //in this case, a* counts as multiple a 
+                           or dp[i][j] = dp[i][j-1]   // in this case, a* counts as single a
+                           or dp[i][j] = dp[i][j-2]   // in this case, a* counts as empty
+** h25 https://leetcode.com/problems/reverse-nodes-in-k-group/
+** TODO h37 https://leetcode.com/problems/sudoku-solver/
+** h41 https://leetcode.com/problems/first-missing-positive/
+put each num at its right pos. don't care about 0 and negatives.
+** h42 https://leetcode.com/problems/trapping-rain-water/
+** TODO h44 https://leetcode.com/problems/wildcard-matching/
+
+** h65 https://leetcode.com/problems/valid-number/
+** h76 https://leetcode.com/problems/minimum-window-substring/
+why only 128 chars?
+class Solution {
+public:
+    string minWindow(string S, string T) {
+        if (S.empty() || T.empty())
+        {
+            return "";
+        }
+        int count = T.size();
+        int require[128] = {0};
+        bool chSet[128] = {false};
+        for (int i = 0; i < count; ++i)
+        {
+            require[T[i]]++;
+            chSet[T[i]] = true;
+        }
+        int i = -1;
+        int j = 0;
+        int minLen = INT_MAX;
+        int minIdx = 0;
+        while (i < (int)S.size() && j < (int)S.size())
+        {
+            if (count)
+            {
+                i++;
+                require[S[i]]--;
+                if (chSet[S[i]] && require[S[i]] >= 0)
+                {
+                    count--;
+                }
+            }
+            else
+            {
+                if (minLen > i - j + 1)
+                {
+                    minLen = i - j + 1;
+                    minIdx = j;
+                }
+                require[S[j]]++;
+                if (chSet[S[j]] && require[S[j]] > 0)
+                {
+                    count++;
+                }
+                j++;
+            }
+        }
+        if (minLen == INT_MAX)
+        {
+            return "";
+        }
+        return S.substr(minIdx, minLen);
+    }
+};
+** h96 https://leetcode.com/problems/unique-binary-search-trees/
+i=1...n, each i can be root
+Let F(i, n) be the number of BST when i is the root
+G(n) = F(1,n)+F(2,n)+...+F(n,n)
+when i is the root, let left part 1..i-1 is a sub problem, so is the right part.
+so F(i,n) = G(i-1)*G(n-i)
+make G(0)=1,G(1)=1
+class Solution {
+public:
+    int numTrees(int n) {
+      vector<int> g(n+1, 0);
+      g[0]=g[1]=1;
+      for(int i = 2; i <= n; i++){
+        for(int k = 1; k <= i; k++){
+          g[i] += g[k-1]*g[i-k];
+	}
+      } 
+      return g[n];
+    }
+};
+*** note
+the most important thing is to find out sub problems
+** h99 https://leetcode.com/problems/recover-binary-search-tree/
+
+in order traverse: left smaller, right bigger. find the 2 wrong number.the 2 number may be next to each other.
+can preoder work?
+** m114 https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+    void flatten(TreeNode* root) {
+        if(root == NULL){
+            return NULL;
+        }
+        stack<TreeNode> s;
+        map<int, int> f;
+        s.push(*root);
+        TreeNode * h = s;
+        while(!s.empty()){
+            
+        }
+    }
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //when visited, added to linked list and stack
+    //when finished, pop
+    
+    void recur(TreeNode *p, TreeNode *&head, TreeNode *&tail){
+        if(p == NULL) return;
+        if(p->left == NULL && p->right == NULL){
+            head = p;
+            tail = p;
+            return;
+        }
+        TreeNode *lH = NULL, *lT = NULL, *rH = NULL, *rT = NULL;
+        recur(p->left, lH, lT);
+        recur(p->right, rH, rT);
+        head = p;
+        if(lH != NULL){
+          head->right = lH;
+        }else{
+            head->right = rH;
+        }
+        p->left = NULL;
+        if(lT != NULL){
+          lT->right = rH;
+        }
+        if(rT != NULL){
+            tail = rT;
+        }else{
+            tail = lT;
+        }
+    }
+    void flatten(TreeNode* root){
+        TreeNode * head = NULL, *tail = NULL;
+        recur(root, head, tail);
+    }
+};
+** m207 https://leetcode.com/problems/course-schedule/
+class Solution {
+public:
+  bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+    int n = numCourses;
+    vector<vector<int>> g(n);
+    for(auto& p:prerequisites){
+      g[p.second].push_back(p.first);
+    }
+    vector<int> color(n,0);
+    int res = 1;
+    for(int i = 0; i < n; i++){
+      if(color[i] == 0){
+        res &= DFS(g, color, i);
+      }
+    }
+    return res;
+  }
+
+  int DFS(vector<vector<int>>& g, vector<int>& color, int i){
+    color[i] = 1;
+    vector<int>& s = g[i];
+    int res = 1;
+    for(vector<int>::iterator it = s.begin(); it != s.end(); it++){
+      if(color[*it] == 0){
+        res &= DFS(g, color, *it);
+      }else if(color[*it] == 1){
+        return 0;
+      }
+    }
+    color[i] = 2;
+    return res;
+  }
+};
+*** note
+can be used to find circle in linked list
+** m241 https://leetcode.com/problems/different-ways-to-add-parentheses/
+if n number
+G(1)=1, G(2)=1
+G(n)=F(1,n)+F(2,n)+...+F(n,n)
+F(i,n)=G(i)*G(n-i)
+
+2-1-1
+i=1: (2)-(1-1)=2  cnt=1
+i=2: (2-1)-1=0 cnt=1
+
+2*3-4*5
+i=1: cnt =2
+2*(3-4*5)=2*(3-20)=2*(-17)=-34
+2*((3-4)*5)=2*(-5)=-10  
+i = 2: cnt = 1
+(2*3)-4*5=6-20=-14
+i = 3: cnt=2
+(2*3-4)*5=2*5=10
+(2*(3-4)*5)=-10
+i = 4: cnt=1
+-14  the same as i = 2?
+
+** m279 https://leetcode.com/problems/perfect-squares/
+1=1
+2=1+1
+3=1+1+1
+4=2*2
+5=4+1
+6=4+1+1
+7=4+1+1+1
+8=4+4
+9=3*3
+10=3*3+1
+11=3*3+1+1
+12=4+4+4
+13=9+4
+p[i+j*j] = min(p[i+j*j], p[i]+1), i=0...n, j=1...n
+class Solution {
+public:
+  int numSquares(int n) {
+    if(n == 0) return 0;
+    vector<int> v(n+1,INT_MAX);
+    v[0] = 0;
+    v[1] = 1;
+    for(int i = 0; i <= n; i++){
+      for(int k = 1; k <= n; k++){
+        if(i + k*k <=n){
+          v[i+k*k] = min(v[i+k*k], v[i]+1);
+        }
+      }
+    }
+    return v[n];
+  }
+};
+** DONE 295. Find Median from Data Stream
+[2,3,4]
+[1,2]
+[4,3,2,1,0]
+// make small.size = large.size + 1 or equal
+class MedianFinder {
+    priority_queue<int> small, large;
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+      if(small.size() == 0 || num <= small.top()){
+        small.push(num);
+        if(small.size() > large.size() && small.size() - large.size() >= 2){
+          int top = small.top();
+          small.pop();
+          large.push(-top);
+        }
+      }else{
+        large.push(-num);
+        if(large.size() > small.size() && large.size() - small.size() >= 2){
+          int top = -large.top();
+          large.pop();
+          small.push(top);
+        }
+      }
+    }
+    
+    double findMedian() {
+       if(small.size() == large.size()){
+         return small.top()+(-large.top()-small.top())/2.0;
+       }else if(small.size() > large.size()){
+         return small.top();
+       }else{
+         return -large.top();
+       }        
+    }
+};
+
+
+** DONE h315 https://leetcode.com/problems/count-of-smaller-numbers-after-self
+merge sort
+when merge from bottom to up, you can add the number of smaller directly, which is O(1).
+we need to add only when left part is bigger than right part, .
+we add when a number of left part is pop out of the head of the vector, the count to add is the count of popped number of the right part.
+[1]
+[1,1]
+[1,2]
+[1,0]
+[1,1,1]
+[3,1,1]
+[1,1,3]
+[1,3,1]
+[1,2,3]
+[1,3,2]
+[3,2,1]
+[3,2,0,1]
+[5,2,6,1]
+//相等时, 前面的先出
+[2,4,2,3]
+[2,4,0,2]
+class Solution {
+    map<int, int> idx2cnt;  
+public:
+  void merge(vector<pair<int, int>>& nums, int l1, int r1, int l2, int r2){
+    int i = l1, k = l2;
+    vector<pair<int, int>> v;
+    int cnt = 0;
+    while(i <= r1 || k <= r2){
+      if(i <= r1 && k <= r2){
+        if(nums[i].second <= nums[k].second){
+	  v.push_back(nums[i]);
+	  idx2cnt[nums[i].first] += cnt;
+	  i++;
+	}else{
+	  v.push_back(nums[k]);
+	  k++;
+	  cnt++;
+	}
+      }else if(i <= r1){
+	  v.push_back(nums[i]);
+	  idx2cnt[nums[i].first] += cnt;
+	  i++;
+      }else if(k <= r2){
+	  v.push_back(nums[k]);
+	  k++;
+	  cnt++;
+      }
+    }
+    for(int j = l1; j <= r2; j++){
+      nums[j] = v[j-l1];
+    }
+  }
+  void ms(vector<pair<int, int>>& nums, int l, int r){
+    if(l >= r) return;
+    int mid = l + (r-l)/2;
+    ms(nums, l, mid);
+    ms(nums, mid+1, r);
+    merge(nums, l, mid, mid+1, r);
+  }
+  vector<int> countSmaller(vector<int>& nums) {
+    if(nums.size() < 1){
+      vector<int> v;
+      return v;
+    }
+    if(nums.size() == 1){
+      vector<int> v;
+      v.push_back(0);
+      return v;
+    }
+    vector<pair<int, int>> idx_pair;
+    for(int i = 0; i < nums.size(); i++){
+      pair<int, int> p;
+      p.first = i;
+      p.second = nums[i];
+      idx_pair.push_back(p);
+      idx2cnt[i] = 0;  
+    }
+    ms(idx_pair, 0, nums.size()-1);
+
+    vector<int> res(nums);
+    for(int i = 0; i < nums.size(); i++){
+      res[i] = idx2cnt[i];
+    }
+    return res;
+  }
+};
+
+** m648 https://leetcode.com/problems/replace-words/
+a an bot
+a bottle with another
+class Solution {
+public:
+  string replaceWords(vector<string>& dict, string sentence) {
+    unordered_set<string> set;
+    for(auto & str:dict){
+      set.insert(str);
+    }
+    int start = 0, end = 0;
+    string res;
+    for(start = 0; start < sentence.size();){ //start++没删导致bug
+      end = start+1;
+      while(end < sentence.size() && sentence[end] != ' '){
+        end++;
+      }
+      string w = sentence.substr(start,end-start);
+      string r = w;
+      for(int k = 1; k <= w.size(); k++){
+        r = w.substr(0,k);
+        if(set.find(r)!=set.end()){
+	  break;
+	}
+      }
+      res += r + " ";
+      start = end+1;
+    }
+    if(res[res.size()-1] == ' ')return res.substr(0, res.size()-1);
+    return res;
+  }
+};
+*** note
+if your method changes when you write the code, delete the old method code all, or you will have hidden bugs.
+** h685 https://leetcode.com/problems/redundant-connection-ii/
+a)one vertex has 2 parent, or b) a circle exist(means there is a back edge which points to the root).
+if a), compare the 2 edge, choose the latter one
+if b), consider all the edges in the circle, choose the last one
+a) b) may happen together
+
+if current edge makes the graph inval
+
+[[1,2], [2,1]]
+p[0, 2, 1]
+p[0, 1, 2]
+
+[[1,2]A, [2,3], [3,2]B]
+[[2,3], [3,2]A, [1,2]B]
+
+//this answer can handle [[1,2],[2,1]]
+class Solution {
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
+        int n = edges.size();
+        vector<int> parent(n+1, 0), candA, candB;
+        // step 1, check whether there is a node with two parents
+        for (auto &edge:edges) {
+            if (parent[edge[1]] == 0)
+                parent[edge[1]] = edge[0]; 
+            else {
+                candA = {parent[edge[1]], edge[1]};
+                candB = edge;
+                edge[1] = 0; // remove this edge
+            }
+        } 
+        // step 2, union find
+        for (int i = 1; i <= n; i++) parent[i] = i; //reset p to self
+        for (auto &edge:edges) {
+            if (edge[1] == 0) continue; // 拿掉B边
+            int u = edge[0], v = edge[1], pu = root(parent, u);
+            // Now every node only has 1 parent, so root of v is implicitly v
+            if (pu == v) {//找到的root是v自己, 说明是circle
+                if (candA.empty()) return edge; //有circle且无AB
+                return candA;//无B的情况, 还有circle, 就是A
+            }
+            parent[v] = pu;
+        }
+        return candB; //有A的情况, 无circle就肯定是B
+    }
+private:
+    int root(vector<int>& parent, int k) {
+        if (parent[k] != k) 
+            parent[k] = root(parent, parent[k]);
+        return parent[k];
+    }
+};
+*** note
+when not easy to find the root to use DFS, it means union find may be ok.
+how to judge a circle:union find on each vertex(slow); DFS and check if back edge exist(fast, check 207)
+how to judge a tree of directed graph: dfs, each edge is tree edge.
+modify the tree to make simple.
+** e743 https://leetcode.com/problems/network-delay-time/
+1->3 8
+1->2 1
+2->3 2
+
+1(0) 3(8) 2(1)
+2(1) 3(3)
+3(3)  
+
+1->3 8
+1->2 1
+1(0) 3(8) 2(1)
+
+
+[[1,2,1],[1,3,8],[2,3,2]]
+3
+1
+
+[[2,1,1],[2,3,1],[3,4,1]]
+4
+2
+
+struct VW{
+  int v;
+  int w; 
+};   
+
+class mycomparison
+{
+  bool reverse;
+public:
+  mycomparison(const bool& revparam=false)
+    {reverse=revparam;}
+  bool operator() (const VW& lhs, const VW&rhs) const
+  {
+    if (reverse) return (lhs.w>rhs.w);
+    else return (lhs.w<rhs.w);
+  }
+};
+
+class Solution {
+public:
+  void relax(int ){
+  }
+  int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+    vector<vector<VW>> g(N+1);
+    for(auto & vec:times){
+      VW vw;
+      vw.v = vec[1];
+      vw.w = vec[2];
+      g[vec[0]].push_back(vw);
+    }
+    int l = 0;
+    priority_queue<VW, vector<VW>, mycomparison> pq;
+    vector<int> len(N+1, INT_MAX);
+    len[K]=0;
+    VW vwK;
+    vwK.v = K;
+    vwK.w = 0;
+    pq.push(vwK);
+      int cnt = 0;
+    while(!pq.empty() && cnt <N){
+      int w = pq.top().w;
+      int nod = pq.top().v;
+      pq.pop(); //means visited and included
+        cnt++;
+      for(int k = 0; k < g[nod].size();k++){
+        if(len[g[nod][k].v]>len[nod]+g[nod][k].w){
+	      len[g[nod][k].v]=len[nod]+g[nod][k].w;
+	    }
+	VW vw;
+	vw.v = g[nod][k].v;
+	vw.w = len[g[nod][k].v];
+	pq.push(vw);
+      }
+    }
+    int res = INT_MIN;
+    for(int i = 1; i <= N; i++){
+      if(len[i] == INT_MAX)
+        return -1;
+      if(len[i] > res) res = len[i];
+    }
+    if(l == INT_MAX) return -1;
+    return res;
+  }
+};
+
+
+struct VW{
+  int v;
+  int w; 
+};   
+
+class Solution {
+public:
+  int extractMin(const vector<int>& len, int N){
+    int min = INT_MAX;
+    int idx;
+    for(int i = 1; i <= N ; i++){
+      if(len[i] != -1 && len[i] < min){ //1 means extracted
+        min = len[i];
+	idx = i;
+      }
+    }
+    return idx;
+  }
+  int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+    vector<vector<VW>> g(N+1);
+    for(auto & vec:times){
+      VW vw;
+      vw.v = vec[1];
+      vw.w = vec[2];
+      g[vec[0]].push_back(vw);
+    }
+    vector<int> len(N+1, INT_MAX);
+    len[K]=0;
+    int cnt = 0;
+    while(cnt < N){
+      int nod = extractMin(len, N);
+      for(int k = 0; k < g[nod].size();k++){
+        if(len[g[nod][k].v]>len[nod]+g[nod][k].w){
+      	      len[g[nod][k].v]=len[nod]+g[nod][k].w;
+      	    }
+      }
+      cnt++;
+      if(cnt<N-1)
+        len[nod] = -1;
+      if(cnt==N-1)
+        return len[nod];
+    }
+    return -1;
+  }
+};
+*** note
+when v is added, the shortest path to v is found.
+the last added node has the longest shortest path.//wrong
+** h793 https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
+5 10 15 20 25 6*5 7*5 8*5 9*5 10*5
+take attention to 5^2,5^3,5^4
+given k, find max n, such that 5^n <= k*5.
+(k*5)! contains cnt(cnt >= k) zeros: cnt-k=n-1+n-2+...+(2-1) when n >=2 
+0:0!-4! (1*5)-(0*5)
+1:5!-9! (2*5)-(1*5)
+2:10!-14! (3*5)-(2*5)
+3:15!-19!
+4:20!-24!
+5:0
+6:25!-29!
+7:
+count the number of 5 as a factor
+** DONE h847 https://leetcode.com/problems/shortest-path-visiting-all-nodes/
+
+class Solution {
+public: int res;
+
+public:
+    void DFS(vector<vector<int>>& graph, vector<int>& visited, vector<int>& nodes, int cur, int cnt){
+        if(res == graph.size()-1) return; // TLE if without this line. this means optimal path found. if all nodes connected to each other, this prune is important
+        if(visited[cur] == 0)cnt++;
+        if(cnt == graph.size()){
+          if(nodes.size() < res) res = nodes.size();
+        }
+        if(nodes.size()>=res) return;
+        visited[cur]++;
+        nodes.push_back(cur);
+        int minV = INT_MAX, idx = -1;
+        for(auto i : graph[cur]) minV = min(minV, visited[i]);//visited nodes are in nodes, not visited  node has the minV
+        for(auto i : graph[cur]){
+          if(visited[i] == minV){
+            DFS(graph, visited, nodes, i, cnt);
+          }
+        }
+        nodes.pop_back();
+        visited[cur]--;
+    }
+
+    int shortestPathLength(vector<vector<int>>& graph) {
+        vector<int> visited(graph.size(), 0);
+        res = INT_MAX;
+        vector<int> nodes;
+        for(int i = 0; i < graph.size(); i++){
+            DFS(graph, visited, nodes, i, 0);
+        }
+        return res;
+    }
+};
+
+
+
+
+class Solution {
+public:
+    int result;
+    void dfs(vector<vector<int>>& graph, vector<int>& cur, vector<int>& visited, int count) {
+        if (result == graph.size()) return; //optimal case: nodes in one line
+        if (count == graph.size()) {
+            result = min(result, int(cur.size()));
+            return;
+        }
+        if (cur.size() >= result) return;
+        int pos = cur.back();
+        
+        int minv = INT_MAX;
+        for (auto n : graph[pos]) minv = min(minv, visited[n]);
+        for (auto n : graph[pos]) {
+            if (visited[n] == minv) {
+                cur.push_back(n);
+                if (!visited[n]) count++;
+                visited[n]++;
+                dfs(graph, cur, visited, count);
+                visited[n]--;
+                if (!visited[n]) count--;
+                cur.pop_back();                
+            }
+        }
+    }
+    
+    int shortestPathLength(vector<vector<int>>& graph) {
+        result = INT_MAX;
+        vector<int> cur;
+        vector<int> visited(graph.size(), 0);
+        int count = 0;
+        for (int i = 0; i < graph.size(); i++) {
+            cur.push_back(i);
+            visited[i]++;
+            count++;
+            dfs(graph, cur, visited, count);
+            count--;
+            visited[i]--;
+            cur.pop_back();
+        }
+        return result - 1;
+    }
+};
+** h854 https://leetcode.com/problems/k-similar-strings/
+one swap can make one number at the right position, so at most only n-1 swap needed.
+1. one swap matches two
+2. one swap matches one, and destroy 0 mathch
+greedy:i from 0 to size-1, always choose the best swap for i.
+choose best: j from i+1 to size-1, find all possible match, then cmp each match with recursion and backtracking
+abcdd
+dcdba 
+dcba
+
+
+abc 
+cba: 1
+cab
+abc
+bca
+acb
+bac
+
+abac 
+baca  
+** DONE https://leetcode.com/problems/maximum-gap/
+assume n numbers: gap = (max-min)/n-1
+n-1 gaps between min-max.
+n-2 numbers put into n-1 gaps, means there is at least 1 empty gap, which means the result is between two successive gaps.
+float is too difficult to handle, we change to use int.
+intGap = ceil(floatGap), integers in gap, their distance < intGap, so the algorithm still works
+[3,6,9,1]
+[10]
+[1,1,1,1]
+[1,2,3,10000]
+[1,2,4]
+[1,5,6]
+[1,2,3,4,5,6]
+[1,9]
+[11,0]
+[6,1,3]
+[1,9,100]
+
+int maximumGap(int* nums, int numsSize) {
+  if(numsSize < 2) return 0;
+  int min = nums[0], max = nums[0];
+  for(int i = 1; i < numsSize; i++){
+    if(nums[i] < min) min = nums[i];
+    if(nums[i] > max) max = nums[i];
+  }
+  int gap = ceil((max - min)*1.0 / (numsSize-1)*1.0);
+  int * pmin = (int*)malloc(numsSize*4);
+  int * pmax = (int*)malloc(numsSize*4);
+  for(int i = 0; i < numsSize; i++){
+    pmin[i] = max;
+    pmax[i] = min;
+  }
+  for(int i = 0; i < numsSize; i++){
+    if(nums[i] == min || nums[i] == max)continue;
+    int idx = (int)((nums[i]-min)/gap);
+    if(nums[i] < pmin[idx])pmin[idx] = nums[i];
+    if(nums[i] > pmax[idx])pmax[idx] = nums[i];
+  }
+  int maxGap = 0;
+  int last = min;
+  For(int i = 0; i < numsSize; i++){
+    if(pmin[i]!=max && pmin[i]!=min){
+        if(pmin[i] - last > maxGap)maxGap = pmin[i] - last;
+        last = pmax[i];
+    }
+  }
+  if(max - last > maxGap)maxGap = max - last;
+  //free(pmin);
+  //free(pmax); //no need to free in leetcode
+  return maxGap;
+}
+
+
+** https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
+buy sel newMin //关键是找最大差值。更大差值意外后面有更小的buy
+//变大要，变小无意义
+//变小有意义.有更小的buy, 就看看是否有更大差值
+[0, 1, 2, 4] 
+[2, 4, 0, 3]
+[0]
+[1, 1]
+[7,6,4,3,1]
+[7,1,5,3,6,4]
+int maxProfit(int* prices, int pricesSize) {
+ if(pricesSize <= 0) return 0;
+ int min = pricesSize[0];
+ int buy = -1, sel = -1;
+ int res = 0;
+ for(int i = 1; i < pricesSize; i++){
+   if(-1 == buy){
+     if(pricesSize[i] < min) min = pricesSize[i];
+     else if(pricesSize[i] > min){
+       buy = min;
+       sel = pricesSize[i];
+     }
+   }else{
+     if(pricesSize[i] < min) min = pricesSize[i];
+     else if(pricesSize[i] > sel) sel = pricesSize[i];
+     if(min < buy && pricesSize[i] - min > sel - buy){
+       buy = min;
+       sel = pricesSize[i];
+     }
+   }
+ }
+ if(sel - buy > res) return sel - buy;
+ return res;
+}
+
+** https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+3,3,5,0,0,3,1,4
+3-5 
+0-4 
+
+[1,2,3,4,5]
+1-5
+[7,6,4,3,1]
+
+第一次的买卖不影响第二次的
+买0-2次
+变小就可以卖第一次.第二次的只要找按顺序的极小极大值
+不变就不动
+变大就更新第一次的卖出价
+先找第一次买卖
+int maxProfit(int* prices, int pricesSize) {
+  if(pricesSize == 0) return 0;
+  int sum = 0;
+  int buy1 = -1, sell1 = -1;
+  int min = prices[0];
+  int i = 0;
+  for(i = 0; i < pricesSize; i++){
+   if(buy1 == -1){
+    if(prices[i] < min) min = prices[i];
+    else if(prices[i] > min && buy1 == -1){
+      buy1 = min;
+      sell1 = prices[i];
+      sum = sell1 - buy1;
+    }
+   }else{
+     if(prices[i] > sell1){
+       sell1 = prices[i];
+     }else if(prices[i] < sell1){
+       sum = sell1 - buy1;
+       break;
+     }
+   }
+  }
+
+  if(i < pricesSize - 1){
+    int buy2 = -1, sell2 = -1, min2 = prices[i];
+    for(int k = i; k < pricesSize; k++){
+      if(prices[k] < min2) min2 = prices[k];
+      else if(prices[k] > min2){
+        buy2 = min2;
+	sell2 = prices[k];
+      }
+    }
+    
+  }
+}
+
+** https://leetcode.com/problems/minimum-height-trees/
+先简化问题:不断地去掉叶子
+n=1;
+n>1;
+vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+  vector<int> v;
+  if(n == 1){
+    v.push_back(0);
+    return v;
+  }
+	
+  vector<set<int> > adj;
+  set<int> s;
+  for(int i = 0; i < n; i++){
+    adj.push_back(s);
+  }
+  for(vector<pair<int, int>>::iterator it = edges.begin(); it != edges.end(); it++){
+    adj[it->first].insert(it->second);
+    adj[it->second].insert(it->first);
+  }
+	
+  vector<int> leaves;
+  for(int i = 0; i < n; i++){
+    if(adj[i].size() == 1){
+      leaves.push_back(i);
+    }
+  }
+	
+  while(n > 2){
+    n -= leaves.size();
+    vector<int> newleaves; //注意局部化:之前这行在外面导致错误
+    for(vector<int>::iterator it = leaves.begin(); it != leaves.end(); it++){
+      int peer = *(adj[*it].begin());
+      adj[peer].erase(*it);
+      if(adj[peer].size() == 1){
+	newleaves.push_back(peer);
+      }
+    }
+    leaves = newleaves;
+  }
+  return leaves;
+}
+
+/*
+  kmp:strstr(s,p) 利用p中已匹配的字符串里跳跃; 跳跃的最大长度就是p中后缀和前缀匹配的最大长度;预处理p时遇到不匹配就利用pi[]往前回退;
+  匹配时和预处理时的逻辑一样(匹配就已匹配长度加一, 没匹配就根据pi[]回退)
+*/
+
+** TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) 
+{
+  if(p->val < root->val && q->val < root->val){
+    return lowestCommonAncestor(root->left, p, q);
+  }else if(p->val > root->val && q->val > root->val){
+    return lowestCommonAncestor(root->right, p, q);
+  }else return root;
+}
+
+//0
+//1 0
+//2 0
+//0 1
+//1 0 1
+//2 1 0
+//3 2 0
+//2 5 0 1
+//2 0 0
+//5 0 0 0 0 2 0
+//3 0 2 0 1 
+** bool canJump(int* nums, int numsSize) {
+    int len = 0;
+    int pos = 0;
+    for(int i = 0; i < numsSize; i++){
+        if(numsSize-1 == i) {
+            printf("true");
+            return true;
+        }
+        if(nums[i] == 0){
+            if(i - pos >= len) {
+                printf("false");
+                return false;
+            }
+        }
+        if(nums[i]+i-pos > len){
+            len = nums[i];
+            pos = i;
+        }
+    }
+    return true;
+}
+
+//dp:down to up
+//"()(()"
+//"()(((()))"
+//(()
+//(())
+//)()())
+//((
+//)
+//()
+//(())()
+//((())())
+//(
+//遇到), 有匹配p[i]=p[i-1]+2; 无匹配, len重新开始计
+** int longestValidParentheses(string s) {
+  int max = 0;
+  int *p = new int[s.length()];
+  int i = 0;
+  std::stack<char> st;
+  for ( std::string::iterator it=s.begin(); it!=s.end(); ++it){
+    p[i] = 0;
+    char c = *it;
+    if(c == ')'){
+      if(i>=1){
+	if(s[i-1] == '('){
+	  if(i <= 1){
+	    p[i] = 2;
+	  }else{
+	    p[i] = p[i-2]+2;
+	  }
+	}else{
+	  if(s[i-1-p[i-1]] == '('){
+	    p[i] = p[i-1]+2+p[i-1-p[i-1]-1];;
+	  }
+	}
+      }
+    }
+    if(p[i]>max)max=p[i];
+    i++;
+  }
+
+  delete [] p;
+  return max;
+}
+
+
+ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+  struct ListNode* head = NULL, tail = NULL;
+  int more = 0;
+  while(l1 != NULL && l2 != NULL){
+    int sum = l1->val + l2->val + more;
+    if(sum >= 10){
+      more = 1;
+      sum -= 10;
+    }
+
+    if(head == NULL){
+      head = new ListNode;
+      head->val = sum;
+      head->next = NULL;
+      tail = head;
+    }
+    l1 = l1->next;
+    l2 = l2->next;
+  }//while
+}
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+  //0 + 0
+  //1 + 2
+  //12 + 34
+  //9+7
+  //12 + 3
+  //21 + 300
+  //9 + 99
+  //999 + 1
+  ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+    struct ListNode* head = NULL, *tail = NULL;
+    int more = 0;
+    while(l1 != NULL && l2 != NULL){
+      int sum = l1->val + l2->val + more;
+      more = 0;
+      if(sum >= 10){
+	more = 1;
+	sum -= 10;
+      }
+
+      if(head == NULL){
+	tail = new ListNode(sum);
+	tail->val = sum;
+	tail->next = NULL;
+	head = tail;
+      }else{
+	tail->next = new ListNode(sum);
+	tail->next->val = sum;
+	tail = tail->next;
+      }
+      l1 = l1->next;
+      l2 = l2->next;
+    }//while
+    
+    while(l1 != NULL){
+      int sum = l1->val + more;
+      more = 0;
+      if(sum >= 10){
+	more = 1;
+	sum -= 10;
+      }
+      tail->next =new ListNode(sum);
+      tail->next->val = sum;
+      tail = tail->next;
+      l1 = l1->next;
+    }
+    
+    while(l2 != NULL){
+      int sum = l2->val +more;
+      more = 0;
+      if(sum >= 10){
+	more = 1;
+	sum -= 10;
+      }
+      tail->next =new ListNode(sum);
+      tail->next->val = sum;
+      tail = tail->next;
+      l2 = l2->next;
+    }
+    
+    if(more > 0){
+      tail->next =new ListNode(1);
+      tail->next->val = 1;
+      tail = tail->next;
+    }
+    
+    return head;
+  }
+};
+
+** https://leetcode.com/problems/find-peak-element/description/
+// 1 2 3 4 5 1
+// 3 1
+// 1 3 -1
+// 1 3 1
+// 1,2,3,1
+// 1,2,1,3,5,6,4
+// 1 2 3
+// 3 2 1
+// 下降就是峰值
+// 一定有峰值
+// 二分: 如果是,返回; 
+// a[mid]>a[mid-1]
+//   a[mid]>a[mid+1] 找到
+//   <: 往右找
+// a[mid]<a[mid-1] 往左找
+int findPeakElement(int* nums, int numsSize) {
+    if(nums == null || numsSize < 1)
+        return -1;
+    int left = 0, right = numsSize-1;
+    while(left <= right){
+        int mid = left + (right - left)/2;
+        if(left == right){
+            return left;
+        }
+        if(right-left==1){
+            if(nums[right]>nums[left]){
+                return right;
+            }else{
+                return left;
+            }
+        }
+        if(nums[mid]>nums[mid-1]){
+            if(nums[mid]>nums[mid+1]){
+                return mid;
+            }else{
+                left = mid+1;
+            }
+        }else{//<
+            right = mid -1;
+        }
+    }
+    return -1;
+}
+
+
+** 有序也是循环有序的一种; 必有一半是有序的
+//1
+//1 2
+//3 4 1 2
+int BS(int a[], int low, int high, int val){
+  if(a == NULL || high < low || low < 0 || high < 0){
+    return -1;
+  }
+  int mid = low + (high - low)/2;
+  if(a[mid] == val){
+    return mid;
+  }else if(mid-1 >= low && a[low] <= a[mid-1]){
+    if(a[low] <= val && val <= a[mid-1]){
+      return BS(a, low, mid-1, val);
+    }else{
+      return BS(a, mid+1, high, val);
+    }
+  }else if(mid+1 <= high){
+    if(a[mid+1] <= val && val <= a[high]){
+      return BS(a, mid+1, high, val);
+    }else{
+      return BS(a, low, mid-1, val);
+    }
+  }
+
+  return -1;
+}
+
+** 36进制加减法
+
+int main(){
+  int a[]={1};
+  cout<<BS(a, 0, 0, 1)<<endl;
+  cout<<BS(a, 0, 0, -1)<<endl;
+  int a1[]={1, 2};
+  cout<<BS(a1, 0, 1, 2)<<endl;
+  cout<<BS(a1, 0, 1, -1)<<endl;
+  int a2[]={3, 4, 1, 2};
+  cout<<BS(a2, 0, 3, 3)<<endl;
+  cout<<BS(a2, 0, 3, 5)<<endl;
+
+  return 0;
+}
+
+class Solution {
+public int res = INT_MAX;
+
+public:
+    void BFS(vector<vector<int>>& graph, vector<int>& visited, vector<int>& nodes, int steps){
+        if(nodes.size() == graph.size()){
+            if(steps < res) res = steps;
+        }
+    }
+    int shortestPathLength(vector<vector<int>>& graph) {
+        int steps = 0;
+        vector<int> visited(graph.size(), 0);
+        vector<int> nodes;
+        queue<int> q;
+        for(int i = 0; i < graph.size(); i++){
+            visited[i]++;
+            nodes.push_back(i);
+            q.push_back(i);
+            while(!q.empty(){
+                int cur = q.front();
+		vector<int>& v = graph[cur];
+		int idx = 0, minVal = INT_MAX;
+		for(int k = 0; k < v.size(); k++){
+		  if(visited[v[k]] < minVal){
+		    minVal = visited[v[k]];
+		    idx = k;
+		  }
+		}
+		for(int k = 0; k < v.size(); k++){
+		  if(visited[v[k]] == 0)nodes.push_back();
+		}
+            }
+                 
+            BFS(graph, visited, nodes, 1);
+            visited[i]--;
+            nodes.pop_back(i);
+        }
+        return res;
+    }
+};
+
+[0 1]
+
+[0 1 2] no
+[1 0 2] yes finish
+
+[0 1 2]
+
+
+class Solution {
+    public int shortestPathLength(int[][] graph) {
+        int N = graph.length;
+        Queue<State> queue = new LinkedList();
+        int[][] dist = new int[1<<N][N];
+        for (int[] row: dist) Arrays.fill(row, N*N);
+
+        for (int x = 0; x < N; ++x) {
+            queue.offer(new State(1<<x, x));
+            dist[1 << x][x] = 0;
+        }
+
+        while (!queue.isEmpty()) {
+            State node = queue.poll();
+            int d = dist[node.cover][node.head];
+            if (node.cover == (1<<N) - 1) return d;
+
+            for (int child: graph[node.head]) {
+                int cover2 = node.cover | (1 << child);
+                if (d + 1 < dist[cover2][child]) {
+                    dist[cover2][child] = d + 1;
+                    queue.offer(new State(cover2, child));
+
+                }
+            }
+        }
+
+        throw null;
+    }
+}
+
+class State {
+    int cover, head;
+    State(int c, int h) {
+        cover = c;
+        head = h;
+    }
+}
+
+class Solution {
+public:
+    vector<int> findRedundantDirectedConnection(vector<vector<int>>& edges) {
+      int n = edges.size();
+      vector<int> p(n+1, 0);
+      int p2 = -1, son = -1;
+      for(auto & edge:edges){
+        if(p[edge[1]] == 0){
+	  p[edge[1] = edge[0];
+	}else{
+	  p2 = edge[0];
+	  son = edge[1];
+	  return edge;
+	}
+      }
+      
+    }
+};
