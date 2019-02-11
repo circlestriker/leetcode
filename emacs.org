@@ -1088,6 +1088,9 @@ modify line 4 of the algorithm to say this: if A[j] ≤ x and j(mod2) =
 9.3-3
 
 ** ch22
+when to use ajacency-matrix:
+graph is small
+for unweighted graphs: they require only one bit per entry.   
 *** 22.1-3
 ajacency-list: O(V+E)
 ajacency-matrices: O(V^2)
@@ -1095,6 +1098,9 @@ ajacency-matrices: O(V^2)
 *** DONE 22.2-5    
 *** 22.3-7
 用stack可以不用递归
+*** 22.4
+topological sort
+only one top, so requires only one DFS
 *** 22.4-1
 p-n-o-s-m-r-y-v-x-w-z-u-q-t
 *** DONE 22-4
@@ -1102,9 +1108,24 @@ one DFS can find min(u),but there are |V| u.
 assume v is one of u's childer, when DFS(v) returns, we get min(v), compare all childer get min(u).
 so one DFS is enough
 ** ch24
+*** 24.2
+DAG-SHORTEST-PATHS can handle negative weight, is it better than Dijkstra?
+why Dijkstra can not handle negative weight?
+**** 24.2-1
+r  s  t  x  y    z
+0  5  3  10 7   5
+r s t x y 
+**** 24.2-2
+last node has no edges
+
 *** 24.3-3
 if do not Relax on the last vertex, still correct.
 because shortest path to last vertex is the longest one.
+*** 24-2
+b. sorted
+1 3 4
+2 3 5
+
 ** B
 B.2 a和b可能无共同祖先,故是partial order
 * csapp
