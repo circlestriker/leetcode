@@ -937,6 +937,7 @@ qsort of linked list:
 i = h, j = h;
 
 void qsort(Node * h, Node * t){
+  if(h == t || h == NULL || t == NULL) return;
   Node * r1 = NULL, * l2 = NULL;
   partition(h, t, r1, l2); 
   qsort(h, r1);
@@ -949,10 +950,10 @@ void swap(Node * a, Node * b){
   *b = tmp;
 }
  
-Node * partition(Node * l, Node * r, Node *& r1, Node *& l2){
+void partition(Node * l, Node * r, Node *& r1, Node *& l2){
   Node * i = NULL, * j = l;
   Node * p = r;
-  while(j->next != r){
+  while(j != r){
     if(*j <= *r){
       if(i == NULL) i = l;
       else i = i->next;
@@ -960,6 +961,7 @@ Node * partition(Node * l, Node * r, Node *& r1, Node *& l2){
     }
     j = j->next;
   }
+  if(i == NULL) i = l;
   swap(i->next, r); 
   r1 = i;
   l2 = i->next->next;
