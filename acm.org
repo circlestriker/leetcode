@@ -401,7 +401,9 @@ public:
   }
 };
 *** note
+black node means circle, which means can not be finished.
 can be used to find circle in linked list
+** TODO m210 https://leetcode.com/problems/course-schedule-ii/
 ** m241 https://leetcode.com/problems/different-ways-to-add-parentheses/
 if n number
 G(1)=1, G(2)=1
@@ -587,6 +589,27 @@ public:
   }
 };
 
+** h329 https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
+draw a DAG and find longest path
+each edge with weight -1, find shortest path
+why need topological sort? to make sure we relax in the same order as the shortest path
+07'
+class Solution {
+public:
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+      int m = matrix.size();
+      int n = matrix[0].size();
+      if(m == 0 || n == 0)return 0;
+      vector<vector<int>> g(m*n);
+      for(int i = 0; i < m; i++){
+        for(int k = 0; k < n; k++){
+	  int v = matrix[i][k];
+	  int node = n*i+k;
+	  if(i > 0 && matrix[i-1][k] > v) g[node].push_back(n*(i-1)+k);
+	}
+      }
+    }
+};
 ** m648 https://leetcode.com/problems/replace-words/
 a an bot
 a bottle with another

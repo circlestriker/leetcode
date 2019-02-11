@@ -1117,6 +1117,10 @@ r  s  t  x  y    z
 r s t x y 
 **** 24.2-2
 last node has no edges
+**** TODO 24.2-3
+
+**** DONE 24.2-4
+1->2->3 means 2 paths.
 
 *** 24.3-3
 if do not Relax on the last vertex, still correct.
