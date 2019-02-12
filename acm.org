@@ -6,6 +6,10 @@ ask until the situation is clear
 test your code
 
 if your method changes when you write the code, delete the old method code all, or you will have hidden bugs.
+
+" 程序员可以被分为两种：先确认前条件/不变式/终止条件/边界条件，然后写出正确的代码; 先编写代码，然后通过各种用例/测试/调试对程序进行调整，最后得到似乎正确的代码我个人保守估计前者开发效率至少是后者的 10 倍，因为前者不需要浪费大量时间在 编码-调试-编码 这个极其耗时的循环上。"
+
+
 #include <iostream>
 
 mc02lwl Lsj 6903
@@ -364,6 +368,27 @@ public:
     void flatten(TreeNode* root){
         TreeNode * head = NULL, *tail = NULL;
         recur(root, head, tail);
+    }
+};
+** e169. Majority Element
+cnt=0 or > 0
+0 从新开始
+> 0: judge equal or not, if equal, add 1, if not, minus 1
+class Solution {
+public:
+    int majorityElement(vector<int>& nums) {
+        int cnt = 0;
+        int pre = 0;
+        for(int i = 0; i < nums.size(); i++){
+            if(cnt == 0){
+                pre = nums[i];
+                cnt = 1;
+                continue;
+            }
+            if(nums[i] == pre) cnt++;
+            else cnt--;
+        }
+        return pre;
     }
 };
 ** m207 https://leetcode.com/problems/course-schedule/

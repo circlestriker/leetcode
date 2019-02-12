@@ -1142,6 +1142,9 @@ p-n-o-s-m-r-y-v-x-w-z-u-q-t
 one DFS can find min(u),but there are |V| u.
 assume v is one of u's childer, when DFS(v) returns, we get min(v), compare all childer get min(u).
 so one DFS is enough
+** ch23
+Note that there can be more than one light edge crossing a cut in the case of ties.
+
 ** ch24
 *** 24.2
 DAG-SHORTEST-PATHS can handle negative weight, is it better than Dijkstra?
