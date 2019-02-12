@@ -1071,6 +1071,9 @@ public:
     return min;
   }
 };
+*** note
+f can be removed, just use A.
+min({1,2,3}) == 1
 ** https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 buy sel newMin //关键是找最大差值。更大差值意外后面有更小的buy
 //变大要，变小无意义
