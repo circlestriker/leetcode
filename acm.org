@@ -611,6 +611,37 @@ public:
 	  if(k > 0 && matrix[i][k-1] > v) g[node].push_back(n*i+k-1);
 	}
       }
+      stack<int> s;
+      DFS(g, s);
+      
+    }
+    
+    DAGRelax(vector<vector<int>>& g, stack<int>& s){
+      while(!s.empty()){
+        int cur = s.top();
+	
+	s.pop();
+      }
+    }
+
+    void DFS(vector<vector<int>> & g, stack<int>& s){
+      int N = g.size();
+      vector<int> color(N, 0);
+      for(int i = 0; i < N; i++){
+        if(color[i] == 0){
+	  DFS(g, i, s);
+	}
+      }
+    }
+    
+    void DFSVisit(vector<vector<int>> & g, int i, stack<int>& s){
+       for(int k = 0; k < g[i].size(); k++){
+         if(color[g[i][k]] == 0){
+	   DFSVisit(g, g[i][k], s);
+	 }
+       }
+       color[i] = 1;
+       s.push(i);
     }
 };
 ** m648 https://leetcode.com/problems/replace-words/
