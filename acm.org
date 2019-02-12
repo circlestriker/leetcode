@@ -606,6 +606,9 @@ public:
 	  int v = matrix[i][k];
 	  int node = n*i+k;
 	  if(i > 0 && matrix[i-1][k] > v) g[node].push_back(n*(i-1)+k);
+	  if(k < n-1 && matrix[i][k+1] > v) g[node].push_back(n*i+k+1);
+	  if(i < n-1 && matrix[i+1][k] > v) g[node].push_back(n*(i+1)+k);
+	  if(k > 0 && matrix[i][k-1] > v) g[node].push_back(n*i+k-1);
 	}
       }
     }
