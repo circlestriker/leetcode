@@ -1043,7 +1043,34 @@ int maximumGap(int* nums, int numsSize) {
   return maxGap;
 }
 
-
+** m931 https://leetcode.com/problems/minimum-falling-path-sum/
+f[r][c] = min(f[r-1][c-1]+A[r][c], f[r-1][c]+A[r][c], f[r-1][c+1]+A[r][c])
+class Solution {
+public:
+  int minFallingPathSum(vector<vector<int>>& A) {
+    int m = A.size();
+    int n = A[0].size();
+    int f[m][n];
+    for(int i = 0; i < n; i++){
+      f[0][i] = A[0][i];
+    }
+    for(int r = 1; r < m; r++){
+      for(int c = 0; c < n; c++){
+        if(c==0)
+          f[r][c] = min(f[r-1][c]+A[r][c], f[r-1][c+1]+A[r][c]);
+	else if(c==n-1)
+          f[r][c] = min(f[r-1][c-1]+A[r][c], f[r-1][c]+A[r][c]);
+	else
+          f[r][c] = min(f[r-1][c-1]+A[r][c], f[r-1][c]+A[r][c], f[r-1][c+1]+A[r][c]);
+      }
+    }
+    int min = INT.MAX;
+    for(int i = 0; i < n; i++){
+      if(f[m-1][i] < min)min = f[m-1][i];
+    }
+    return min;
+  }
+};
 ** https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
 buy sel newMin //关键是找最大差值。更大差值意外后面有更小的buy
 //变大要，变小无意义
