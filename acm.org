@@ -311,6 +311,25 @@ the most important thing is to find out sub problems
 
 in order traverse: left smaller, right bigger. find the 2 wrong number.the 2 number may be next to each other.
 can preoder work?
+** e108. Convert Sorted Array to Binary Search Tree
+class Solution {
+    public TreeNode buildBST(int[] nums, int low, int high){
+        if(low>high)return null;
+        int mid = low+(high-low)/2;
+	TreeNode node = new TreeNode(nums[mid]);
+	node.left = buildBST(nums, low, mid-1);
+	node.right = buildBST(nums, mid+1, high);
+	return node;
+    }
+    
+    public TreeNode sortedArrayToBST(int[] nums) {
+        int low = 0, high = nums.length-1;
+       return buildBST(nums, low, high);
+    }
+}
+*** node
+test edge case before and after coding
+
 ** m114 https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
     void flatten(TreeNode* root) {
         if(root == NULL){
