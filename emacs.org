@@ -1144,7 +1144,13 @@ assume v is one of u's childer, when DFS(v) returns, we get min(v), compare all 
 so one DFS is enough
 ** ch23
 Note that there can be more than one light edge crossing a cut in the case of ties.
-
+Theorem 23.1: assume there is a MST, then cut to respect A in it.
+*** 23.1-1
+cut through (u,v).
+(u,v) is a light edge cross the cut, so it is safe to add for some MST.
+*** 23.1-3
+cut through (u,v), and do not through other edges of MST which contains (u,v)
+method 2:use contradiction 
 ** ch24
 *** 24.2
 DAG-SHORTEST-PATHS can handle negative weight, is it better than Dijkstra?
