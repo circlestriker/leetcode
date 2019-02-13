@@ -1124,6 +1124,9 @@ C.1-5
 
 ** ch15
 fig15.2: brute force(1 cut, then 2 cut, then 3 cut)
+ we solve smaller problems of the same type, but of smaller sizes
+
+optimal substructure: optimal solutions to a problem incorporate optimal solutions to related subproblems, which we may solve independently.
 ** ch22
 when to use ajacency-matrix:
 graph is small
