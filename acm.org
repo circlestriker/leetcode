@@ -588,9 +588,8 @@ public:
       if(n==0)return false;
       int row = 0, col = n-1;
       while(row < m && col >= 0){
-        int v = matrix[row][col];
-	if(target > v) row++;
-	else if(target < v) col--;
+	if(target > matrix[row][col]) row++;
+	else if(target < matrix[row][col]) col--;
 	else return true;
       }
       return false;
