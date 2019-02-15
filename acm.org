@@ -576,6 +576,8 @@ public:
 black node means circle, which means can not be finished.
 can be used to find circle in linked list
 ** TODO m210 https://leetcode.com/problems/course-schedule-ii/
+** TODO 230. Kth Smallest Element in a BST
+in-order traverse
 ** m240. Search a 2D Matrix II
 method 1: binary search (no such method)
 method 2: throw one row or one column each time, O(m+n). begin from left bottom or right top corner both works.
@@ -694,7 +696,10 @@ public:
     }
 };
 
-
+** 300. Longest Increasing Subsequence
+tails is an array storing the smallest tail of all increasing subsequences with length i+1 in tails[i].
+len = 2   :      [4, 5], [5, 6]       => tails[1] = 5
+tail分别是5,6. 最小的是5
 ** DONE h315 https://leetcode.com/problems/count-of-smaller-numbers-after-self
 merge sort
 when merge from bottom to up, you can add the number of smaller directly, which is O(1).
@@ -783,6 +788,13 @@ public:
   }
 };
 
+** 326. Power of Three
+class Solution {
+public:
+    bool isPowerOfThree(int n) {
+        return fmod(log10(n)/log10(3),1) == 0; //为什么不能用<0.000001判断?
+    }
+};
 ** h329 https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
 draw a DAG and find longest path
 each edge with weight -1, find shortest path
@@ -838,6 +850,8 @@ public:
        s.push(i);
     }
 };
+** TODO e350. Intersection of Two Arrays II
+
 ** TODO h403. Frog Jump
 
 ** m648 https://leetcode.com/problems/replace-words/
