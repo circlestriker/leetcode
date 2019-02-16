@@ -771,7 +771,9 @@ public:
 	    return size;
     }
 };
-
+*** note
+这个dp, 在考虑新的x时, 可能得出t[size]这个新的子问题的值(size++了), 也可能要更新原有的t[i]这个子问题的值(size没有++)。
+如何找t[i]<=v<t[i+1]的i: 还是像上面那样找t[i-1]<v<=t[i]的i，如何判断t[i]==v，是就是i, 否则是i-1
 ** DONE h315 https://leetcode.com/problems/count-of-smaller-numbers-after-self
 merge sort
 when merge from bottom to up, you can add the number of smaller directly, which is O(1).
