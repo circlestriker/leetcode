@@ -733,6 +733,45 @@ public:
 	return size;
     }
 };
+
+public int lengthOfLIS(int[] nums) {
+    int[] tails = new int[nums.length];
+    int size = 0;
+    for (int x : nums) {
+        int i = 0, j = size; //认为最后有个INT_MAX, 这样i~j必有>=x的数
+        while (i != j) { //加入循环。loop invariant: 数组里有1个以上数;
+            int m = (i + j) / 2; //奇数个时指向中间; 偶数个时指向中间2个的第二个
+            if (tails[m] < x)
+                i = m + 1;
+            else
+                j = m;
+        }
+        tails[i] = x;
+        if (i == size) ++size;
+    }
+    return size;
+}
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> t(n);
+        int size = 0;
+        for(int i = 0; i < n; i++){
+            int l = 0, r = size;
+            while(l < r){
+                int m = l+(r-l)/2;
+                if(t[m] < nums[i])l = m+1;
+                else r = m;
+            }
+            t[l] = nums[i];
+            if(l==size)++size;
+        }
+	    return size;
+    }
+};
+
 ** DONE h315 https://leetcode.com/problems/count-of-smaller-numbers-after-self
 merge sort
 when merge from bottom to up, you can add the number of smaller directly, which is O(1).
