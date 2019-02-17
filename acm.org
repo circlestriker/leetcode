@@ -524,28 +524,29 @@ public:
        if(NULL == head)return head;
        ListNode* t = head;        
        while(t->next != NULL)t = t->next;
-       qsort(head, t);
+       return qsort(head, t);
     }
 
-void qsort(ListNode * h, ListNode * t){
-  if(h == t || h == NULL || t == NULL) return;
+ListNode* qsort(ListNode * h, ListNode * t){
+  if(h == t || h == NULL || t == NULL) return h;
   ListNode * r1 = NULL, * l2 = NULL;
   partition(h, t, r1, l2); 
   qsort(h, r1);
   qsort(l2, t);
+  return h;
 }
 
-void swap(Node * a, Node * b){
-  int tmp = *a;
-  *a = *b;
-  *b = tmp;
+void swap(ListNode * a, ListNode * b){
+  int tmp = a->val;
+  a->val = b->val;
+  b->val = tmp;
 }
  
-void partition(Node * l, Node * r, Node *& r1, Node *& l2){
-  Node * i = NULL, * j = l;
-  Node * p = r;
+void partition(ListNode * l, ListNode * r, ListNode *& r1, ListNode *& l2){
+  ListNode * i = NULL, * j = l;
+  ListNode * p = r;
   while(j != r){
-    if(*j <= *r){
+    if(j->val <= r->val){
       if(i == NULL) i = l;
       else i = i->next;
       swap(i, j);
@@ -557,7 +558,6 @@ void partition(Node * l, Node * r, Node *& r1, Node *& l2){
   r1 = i;
   l2 = i->next->next;
 }
-
 };
 
 ** e169. Majority Element
