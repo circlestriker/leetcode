@@ -1160,6 +1160,9 @@ method 2:use contradiction
 add the decreased edge to T will make a circle on T.
 Throw the max weighted edge in the circle will get a new MST.
 DFS will find the circle, then use Pi array to find the max weighted edge.
+*** 23.2-1
+put the edges of T in the front of the order
+T里有可能有多条相同weight的边，比如fig23.4的weight是4的边。
 ** ch24
 *** 24.2
 DAG-SHORTEST-PATHS can handle negative weight, is it better than Dijkstra?
@@ -1213,3 +1216,15 @@ native组件是指web组件, 不是原生iOS组件
 *** Flutter
 性能无限接近原生
 相较于RN和Weex使用Javascript作为编程语言与使用平台自身引擎渲染界面不同，Flutter直接选择2D绘图引擎库skia来渲染界面。
+* network
+syn后都需要ack。故需要3次握手。
+如果只有2次握手: A 连接 B, B ack A后两边即进入established状态。
+此时会产生"失效请求"占用资源的问题:
+A连接B, 这个一直未达到B。超时了，A重新请求，B ack后双方进入established状态。结束后都closed.
+然后A的第一个已"失效"请求达到B, B ack进入established状态，等待接收数据或主动发送数据。但是A已是closed, B就一直等待下去导致资源浪费。
+
+四次挥手: 每一方向的连接断开都要Fin+Ack, 故是2次。
+
+底层(common层)整包收发的好处是减少上下文切换。
+如果包收不完整, 应用层也是要一直等待的。
+
