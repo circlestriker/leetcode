@@ -517,6 +517,49 @@ int maxProfit(int* prices, int pricesSize) {
   }
 }
 
+** m148. Sort List
+class Solution {
+public:
+    ListNode* sortList(ListNode* head) {
+       if(NULL == head)return head;
+       ListNode* t = head;        
+       while(t->next != NULL)t = t->next;
+       qsort(head, t);
+    }
+
+void qsort(ListNode * h, ListNode * t){
+  if(h == t || h == NULL || t == NULL) return;
+  ListNode * r1 = NULL, * l2 = NULL;
+  partition(h, t, r1, l2); 
+  qsort(h, r1);
+  qsort(l2, t);
+}
+
+void swap(Node * a, Node * b){
+  int tmp = *a;
+  *a = *b;
+  *b = tmp;
+}
+ 
+void partition(Node * l, Node * r, Node *& r1, Node *& l2){
+  Node * i = NULL, * j = l;
+  Node * p = r;
+  while(j != r){
+    if(*j <= *r){
+      if(i == NULL) i = l;
+      else i = i->next;
+      swap(i, j);
+    }
+    j = j->next;
+  }
+  if(i == NULL) i = l;
+  swap(i->next, r); 
+  r1 = i;
+  l2 = i->next->next;
+}
+
+};
+
 ** e169. Majority Element
 cnt=0 or > 0
 0 从新开始
