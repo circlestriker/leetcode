@@ -1299,6 +1299,16 @@ L4:
 5: -4 + 8 = 4
 *** 25.1-2
 i到i不可能是整数。负数的话导致最短路径无限变小。both are not good, so 0 is required.
+** 26
+有平行反向边，就对其一边修改，中间插入一个节点。
+
+super source, super sink 把多source多sink的问题简化为单source单sink问题
+
+decrease u->v的flow，就是在v->u方向加个相应的weight
+ |E(f)| <= 2|E|是指边的条数
+*** 疑问
+fig26.4(b) when f is 0, why v3->v1 is 12?
+could there be negative weighted edge in Max Flow problem?
 ** B
 B.2 a和b可能无共同祖先,故是partial order
 * csapp

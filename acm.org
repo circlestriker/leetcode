@@ -739,6 +739,63 @@ public:
     }
 };
 
+** h297. Serialize and Deserialize Binary Tree
+class Codec {
+public:
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+      if(NULL == root)return "";
+      queue<char> q;
+      q.push(root->val);
+      ostringstream out;
+      out << p->val;//encode when enter
+      while(!q.empty()){
+        TreeNode * p = q.pop();
+	//null do not enter queue
+	if(p->left != NULL){
+	  q.push(p->left);
+	  str += "," + p->val;
+	  out << 
+	}else str += ",N";
+	if(p->right != NULL){
+	  q.push(p->right);
+	  str += ","+ p->val;
+	}else str +=  ",N";
+      }
+      int len = str.size();
+      while(len > 0 && str[len-1]=='N')len -= 2;
+      return str.substr(0, len);
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+       if(data == "")return NULL;
+       TreeNode * h = NULL;
+       queue<TreeNode*> q;
+       h->val = data[0], h->left = NULL, h->right = NULL;
+       q.push(h);
+       for(int i = 2; i < data.size(); i+=4){
+         char c = data[i];
+         TreeNode * r = q.top();
+	 if(c == 'N') r->left = NULL;
+	 else{
+         TreeNode * p = new TreeNode;
+         p->val = data[i], p->left = NULL, p->right = NULL;
+	 r->left = p;
+	 q.push(p);
+	 }
+	 if(i+2 < data.size()){
+	   TreeNode * p2 = new TreeNode;
+	   p2->val = data[i+2], p2->left = NULL, p2->right = NULL;
+	   r->right = p2;
+	   q.push(p2);
+	 }
+	 q.pop();
+       }
+       return h;
+    }
+};
 ** m300. Longest Increasing Subsequence
 dp
 tails is an array storing the smallest tail of all increasing subsequences with length i+1 in tails[i].
