@@ -742,52 +742,53 @@ public:
 ** h297. Serialize and Deserialize Binary Tree
 class Codec {
 public:
-
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
       if(NULL == root)return "";
-      queue<char> q;
-      q.push(root->val);
+      queue<TreeNode*> q;
+      q.push(root);
       ostringstream out;
-      out << p->val;//encode when enter
+      out << root->val;//encode when enter
       while(!q.empty()){
-        TreeNode * p = q.pop();
+        TreeNode * p = q.front();
+	q.pop();
 	//null do not enter queue
 	if(p->left != NULL){
 	  q.push(p->left);
-	  str += "," + p->val;
-	  out << 
-	}else str += ",N";
+	  out <<' '<<p->left->val; 
+	}else out <<' '<<'N';
 	if(p->right != NULL){
 	  q.push(p->right);
-	  str += ","+ p->val;
-	}else str +=  ",N";
+	  out<<' '<<p->right->val;
+	}else out <<' '<<'N';
       }
-      int len = str.size();
-      while(len > 0 && str[len-1]=='N')len -= 2;
-      return str.substr(0, len);
+      return out.str();
     }
 
     // Decodes your encoded data to tree.
     TreeNode* deserialize(string data) {
        if(data == "")return NULL;
+       istringstream in(data);
+       string s;
+       in >> s;
        TreeNode * h = NULL;
        queue<TreeNode*> q;
-       h->val = data[0], h->left = NULL, h->right = NULL;
+       h->val = stoi(s), h->left = NULL, h->right = NULL;
        q.push(h);
-       for(int i = 2; i < data.size(); i+=4){
-         char c = data[i];
-         TreeNode * r = q.top();
-	 if(c == 'N') r->left = NULL;
+       while(in >> s, s.size()>0){
+         TreeNode * r = q.front();
+	 if(s == "N") r->left = NULL;
 	 else{
-         TreeNode * p = new TreeNode;
-         p->val = data[i], p->left = NULL, p->right = NULL;
+         TreeNode * p = new TreeNode(stoi(s));
+         //p->val = stoi(s), p->left = NULL, p->right = NULL;
 	 r->left = p;
 	 q.push(p);
 	 }
-	 if(i+2 < data.size()){
-	   TreeNode * p2 = new TreeNode;
-	   p2->val = data[i+2], p2->left = NULL, p2->right = NULL;
+	 in >> s;
+	 if(s == "N")r->right = NULL;
+	 else{
+	   TreeNode * p2 = new TreeNode(stoi(s));
+	   //p2->val = stoi(s), p2->left = NULL, p2->right = NULL;
 	   r->right = p2;
 	   q.push(p2);
 	 }
