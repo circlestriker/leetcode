@@ -740,6 +740,7 @@ public:
 };
 
 ** h297. Serialize and Deserialize Binary Tree
+
 class Codec {
 public:
     // Encodes a tree to a single string.
@@ -771,16 +772,14 @@ public:
        istringstream in(data);
        string s;
        in >> s;
-       TreeNode * h = NULL;
+       TreeNode * h = new TreeNode(stoi(s));
        queue<TreeNode*> q;
-       h->val = stoi(s), h->left = NULL, h->right = NULL;
        q.push(h);
-       while(in >> s, s.size()>0){
+       while(in >> s, s.size()>0 && !q.empty()){
          TreeNode * r = q.front();
 	 if(s == "N") r->left = NULL;
 	 else{
          TreeNode * p = new TreeNode(stoi(s));
-         //p->val = stoi(s), p->left = NULL, p->right = NULL;
 	 r->left = p;
 	 q.push(p);
 	 }
@@ -788,7 +787,6 @@ public:
 	 if(s == "N")r->right = NULL;
 	 else{
 	   TreeNode * p2 = new TreeNode(stoi(s));
-	   //p2->val = stoi(s), p2->left = NULL, p2->right = NULL;
 	   r->right = p2;
 	   q.push(p2);
 	 }
