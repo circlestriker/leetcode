@@ -621,6 +621,21 @@ can be used to find circle in linked list
 ** TODO m210 https://leetcode.com/problems/course-schedule-ii/
 ** TODO 230. Kth Smallest Element in a BST
 in-order traverse
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int k) {
+      vector<int> v;
+      visit(root, k, v);
+      return v[k-1];
+    }
+    void visit(TreeNode* root, int k, vector<int>& v){
+      if(root == NULL)return;
+      if(v.size()==k)return;
+      visit(root->left, k, v);
+      v.push_back(root->val);
+      visit(root->right, k, v);
+    }
+};
 ** m240. Search a 2D Matrix II
 method 1: binary search (no such method)
 method 2: throw one row or one column each time, O(m+n). begin from left bottom or right top corner both works.
