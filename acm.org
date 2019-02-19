@@ -746,7 +746,7 @@ public:
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
       if(NULL == root)return "";
-      queue<TreeNode*> q;
+      queue<TreeNode*> q; //BFS with queue
       q.push(root);
       ostringstream out;
       out << root->val;//encode when enter
@@ -763,7 +763,7 @@ public:
 	  out<<' '<<p->right->val;
 	}else out <<' '<<'N';
       }
-      return out.str();
+      return out.str(); // each left node has 'N', is OK
     }
 
     // Decodes your encoded data to tree.
@@ -774,7 +774,7 @@ public:
        in >> s;
        TreeNode * h = new TreeNode(stoi(s));
        queue<TreeNode*> q;
-       q.push(h);
+       q.push(h); //decode when push
        while(in >> s, s.size()>0 && !q.empty()){
          TreeNode * r = q.front();
 	 if(s == "N") r->left = NULL;
@@ -795,6 +795,46 @@ public:
        return h;
     }
 };
+
+recursion:(DFS: both serialize and deserializw are DFS)
+when teminate:null node
+You do not necessarily need to follow this format, so please be creative and come up with different approaches yourself.
+递归出来的format是和题中的不一样的
+递归代码量少很多。时间空间效率差不多，之前52(beats 96%), 现在56(beats 69%)
+class Codec {
+public:
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+      ostringstream out;
+      serialize(root, out);
+      return out.str();
+    }
+    void serialize(TreeNode *root, ostringstream& out){
+      if(NULL == root){
+        out <<" N";
+	return;
+      }
+      out <<" "<<root->val;
+      serialize(root->left, out);
+      serialize(root->right, out);
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+      istringstream in(data);
+      return deserialize(in);
+    }
+    TreeNode* deserialize(istringstream& in){
+      string s;
+      in >> s;
+      if(s == "N")return NULL;
+      TreeNode *p = new TreeNode(stoi(s));
+      p->left = deserialize(in);
+      p->right = deserialize(in);
+      return p;
+    }
+};
+
 ** m300. Longest Increasing Subsequence
 dp
 tails is an array storing the smallest tail of all increasing subsequences with length i+1 in tails[i].
