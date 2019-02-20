@@ -544,7 +544,7 @@ void swap(ListNode * a, ListNode * b){
 }
  
 void partition(ListNode * l, ListNode * r, ListNode *& r1, ListNode *& l2){
-  ListNode * i = NULL, * j = l;
+  ListNode * i = NULL, * j = l;//i是l-1到r-1, j是l到r-1
   while(j != r){
     if(j->val <= r->val){
       if(i == NULL) i = l;
