@@ -553,10 +553,12 @@ void partition(ListNode * l, ListNode * r, ListNode *& r1, ListNode *& l2){
     }
     j = j->next;
   }
-  if(i == NULL) i = l;
-  swap(i->next, r); 
+  ListNode * i1;//i+1, won't be null
+  if(i == NULL) i1 = l;
+  else i1 = i->next;
+  swap(i1, r); 
   r1 = i;
-  l2 = i->next->next;
+  l2 = i1->next;
 }
 };
 
