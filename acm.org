@@ -619,7 +619,7 @@ public:
 black node means circle, which means can not be finished.
 can be used to find circle in linked list
 ** TODO m210 https://leetcode.com/problems/course-schedule-ii/
-** TODO 230. Kth Smallest Element in a BST
+** DONE 230. Kth Smallest Element in a BST
 in-order traverse
 class Solution {
 public:
@@ -634,6 +634,19 @@ public:
       visit(root->left, k, v);
       v.push_back(root->val);
       visit(root->right, k, v);
+    }
+};
+
+能否不用vector?
+用k来统计已经遍历了多少个元素:beat98%
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int& k) {
+      if(root){
+        int x = kthSmallest(root->left, k);
+	return !k ? x : !--k ? root->val : kthSmallest(root->right,k);
+      }
+      return -1;//这个return不影响结果
     }
 };
 ** m240. Search a 2D Matrix II
