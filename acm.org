@@ -519,7 +519,7 @@ int maxProfit(int* prices, int pricesSize) {
 
 ** m148. Sort List
 class Solution {
-public:
+    public:
     ListNode* sortList(ListNode* head) {
        if(NULL == head)return head;
        ListNode* t = head;        
@@ -527,6 +527,7 @@ public:
        return qsort(head, t);
     }
 
+public:
 ListNode* qsort(ListNode * h, ListNode * t){
   if(h == t || h == NULL || t == NULL) return h;
   ListNode * r1 = NULL, * l2 = NULL;
@@ -544,7 +545,6 @@ void swap(ListNode * a, ListNode * b){
  
 void partition(ListNode * l, ListNode * r, ListNode *& r1, ListNode *& l2){
   ListNode * i = NULL, * j = l;
-  ListNode * p = r;
   while(j != r){
     if(j->val <= r->val){
       if(i == NULL) i = l;
