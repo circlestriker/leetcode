@@ -1127,6 +1127,13 @@ fig15.2: brute force(1 cut, then 2 cut, then 3 cut)
  we solve smaller problems of the same type, but of smaller sizes
 
 optimal substructure: optimal solutions to a problem incorporate optimal solutions to related subproblems, which we may solve independently.
+** ch16
+activity-selection
+cut-and-paste is a good method for DP
+Theorem 16.1 proof: use substitution
+*** 16.1-3
+choose the one with latest start time
+3 2 6 2 6 4 4 3 4 12 4//task 1 and 2 are not mutual
 ** ch22
 when to use ajacency-matrix:
 graph is small
@@ -1299,7 +1306,7 @@ L4:
 5: -4 + 8 = 4
 *** 25.1-2
 i到i不可能是整数。负数的话导致最短路径无限变小。both are not good, so 0 is required.
-** 26
+** ch26
 有平行反向边，就对其一边修改，中间插入一个节点。
 
 super source, super sink 把多source多sink的问题简化为单source单sink问题
@@ -1309,6 +1316,9 @@ decrease u->v的flow，就是在v->u方向加个相应的weight
 *** 疑问
 fig26.4(b) when f is 0, why v3->v1 is 12?
 could there be negative weighted edge in Max Flow problem?
+** ch34
+for many reasonable models of computation, a problem that can be solved in polynomial time in one model can be solved in polynomial time in an- other.
+the class of polynomial-time solvable problems has nice closure proper- ties, since polynomials are closed under addition, multiplication, and composition.
 ** B
 B.2 a和b可能无共同祖先,故是partial order
 * csapp

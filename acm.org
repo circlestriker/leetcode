@@ -526,7 +526,6 @@ class Solution {
        while(t->next != NULL)t = t->next;
        return qsort(head, t);
     }
-
 public:
 ListNode* qsort(ListNode * h, ListNode * t){
   if(h == t || h == NULL || t == NULL) return h;
@@ -1097,6 +1096,66 @@ public:
 
 ** TODO h403. Frog Jump
 
+** TODO e572 Subtree of Another Tree
+in order traverse, then at the front or at the back
+method2:recursion
+** TODO e581. Shortest Unsorted Continuous Subarray
+public int findUnsortedSubarray(int[] A) {
+    int n = A.length, beg = -1, end = -2, min = A[n-1], max = A[0];
+    for (int i=1;i<n;i++) {
+      max = Math.max(max, A[i]);
+      min = Math.min(min, A[n-1-i]);
+      if (A[i] < max) end = i; //because there is bigger num on the left
+      if (A[n-1-i] > min) beg = n-1-i; //because there is smaller num on the right
+    }
+    return end - beg + 1;
+}
+method 1: sort and compare, O(nlgn)   
+method 2:
+left to right: if one becomes small, move it left until come across a smaller one
+riith to left: if one becomes large, move it right until come across a larger one. O(n)
+method 2 is wrong, because there may be smaller or larger num in the middle
+[2, 6, 4, 8, 10, 9, 15]
+i  beg end min max
+1 -1  -2  15   2
+2         9   6
+3  4   2  9   6 
+4  2   
+class Solution {
+public:
+    int findUnsortedSubarray(vector<int>& nums) {
+      int n = nums.size();
+      int l = -1, r = -1;
+      int min = nums[0], ni = 0;
+      for(int i = 1; i < n; i++){
+        if(nums[i] < nums[i-1]){
+	  min = nums[i];
+	}else{
+	  if(nums[i] < min) min = nums[i], ni = i;
+	}
+      }
+      for(int i = ni-1; i >= 0; i++){
+        if(nums[i] > min) l = i; 
+      }
+      int max = nums[n-1], mi = n-1;
+      for(int i = n-1-1; i>=0; i--){
+        if(nums[i] > nums[i+1]){
+	  max = nums[i];
+	}else{
+	  if(nums[i] > max) max = nums[i], mi = i;
+	}
+      }
+      for(int i = mi+1; i < n; i++){
+        if(nums[i] < max) r = i;
+      }
+      return r-l+1;
+    }
+};
+[2,6,4,8,10,9,15]
+1 2 
+2 1
+** e617. Merge Two Binary Trees
+recursion
 ** m648 https://leetcode.com/problems/replace-words/
 a an bot
 a bottle with another
@@ -1325,6 +1384,7 @@ public:
 when v is added, the shortest path to v is found.
 the last added node has the longest shortest path.//right
 if u is added to S before v, then shortest path to u is shorter than that to v
+** e771. Jewels and Stones
 ** h793 https://leetcode.com/problems/preimage-size-of-factorial-zeroes-function/
 5 10 15 20 25 6*5 7*5 8*5 9*5 10*5
 take attention to 5^2,5^3,5^4
