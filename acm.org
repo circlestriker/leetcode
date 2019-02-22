@@ -230,6 +230,8 @@ public:
     }
 };
 ** h65 https://leetcode.com/problems/valid-number/
+** TODO e70. Climbing Stairs
+
 ** h76 https://leetcode.com/problems/minimum-window-substring/
 why only 128 chars?
 class Solution {
@@ -1096,6 +1098,10 @@ public:
 
 ** TODO h403. Frog Jump
 
+** TODO e543. Diameter of Binary Tree
+DFS
+2BFS
+cut
 ** TODO e572 Subtree of Another Tree
 in order traverse, then at the front or at the back
 method2:recursion
