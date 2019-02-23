@@ -563,6 +563,8 @@ void partition(ListNode * l, ListNode * r, ListNode *& r1, ListNode *& l2){
 }
 };
 
+** TODO e155. Min Stack
+
 ** e169. Majority Element
 cnt=0 or > 0
 0 从新开始
@@ -600,6 +602,24 @@ public:
       return p[n-1];
     }
 };
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+      int n = nums.size();
+      if(n == 0)return 0;
+      int p0,p1,p2;
+      p0 = nums[0];
+      if(n == 1)return p0;
+      p1 = nums[1]>nums[0]?nums[1]:nums[0];
+      for(int i = 2; i < n; i++){
+        p2 = max(p0+nums[i], p1);
+	p0 = p1, p1 = p2;
+      }
+      return p1;
+    }
+};
+
 
 rob from left to right.
 p[i] = max(p[i-2]+a[i], p[i-1])
