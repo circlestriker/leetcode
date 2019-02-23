@@ -1098,8 +1098,26 @@ public:
 
 ** TODO h403. Frog Jump
 
-** TODO e438. Find All Anagrams in a String
-
+** DONE e438. Find All Anagrams in a String
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) {
+      vector<int> sv(26,0), pv(26,0), res;
+      int sl = s.size(), pl = p.size();
+      if(sl < pl)return res; 
+      for(int i = 0; i < p.size(); i++){
+        pv[p[i]-'a']++;
+	sv[s[i]-'a']++;
+      }
+      if(pv == sv)res.push_back(0);
+      for(int i = 1; i <= sl-pl; i++){
+        sv[s[pl+i-1]-'a']++;
+	sv[s[i-1]-'a']--;
+	if(sv == pv)res.push_back(i);
+      }
+      return res;
+    }
+};
 ** TODO e543. Diameter of Binary Tree
 DFS
 2BFS
