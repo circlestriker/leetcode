@@ -1143,7 +1143,7 @@ public:
       int cnt = 0, n = x^y;
       int k = 0;
       int v = 1<<k;
-      while(v <= n){
+      while(k<=30){
         if(n & v)cnt++; 
 	k++;
 	v = 1<<k;
