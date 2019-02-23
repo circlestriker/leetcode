@@ -1136,6 +1136,21 @@ public:
       return res;
     }
 };
+** e461. Hamming Distance
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+      int cnt = 0, n = x^y;
+      int k = 0;
+      int v = 1<<k;
+      while(v <= n){
+        if(n & v)cnt++; 
+	k++;
+	v = 1<<k;
+      }
+      return cnt;
+    }
+};
 ** TODO e543. Diameter of Binary Tree
 DFS
 2BFS
