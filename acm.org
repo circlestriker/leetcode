@@ -1118,6 +1118,24 @@ public:
       return res;
     }
 };
+** e448. Find All Numbers Disappeared in an Array
+> put nums in the right pos, if no num at posX, put -1 in posX 
+> set nums[nums[i]-1] = -nums[nums[i]-1];
+class Solution {
+public:
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+      int n = nums.size();
+      for(int i = 0; i < n; i++){
+        int v = abs(nums[i]);
+	if(nums[v-1]>0)nums[v-1] = -nums[v-1];
+      }
+      vector<int> res;
+      for(int i = 0; i < n; i++){
+        if(nums[i]>0)res.push_back(i+1);
+      }
+      return res;
+    }
+};
 ** TODO e543. Diameter of Binary Tree
 DFS
 2BFS
