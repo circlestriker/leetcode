@@ -584,6 +584,26 @@ public:
         return pre;
     }
 };
+** e198. House Robber
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+      int n = nums.size();
+      if(n == 0)return 0;
+      vector<int> p(n,0);
+      p[0] = nums[0];
+      if(n == 1)return p[0];
+      p[1] = nums[1]>nums[0]?nums[1]:nums[0];
+      for(int i = 2; i < n; i++){
+        p[i] = max(p[i-2]+nums[i], p[i-1]);
+      }
+      return p[n-1];
+    }
+};
+
+rob from left to right.
+p[i] = max(p[i-2]+a[i], p[i-1])
+p[0] = a[0];
 ** m207 https://leetcode.com/problems/course-schedule/
 class Solution {
 public:
@@ -1151,6 +1171,29 @@ public:
       return cnt;
     }
 };
+
+while(v<=n)时, 1^31是负数，导致继续循环。到1^32时就报错:
+runtime error: shift exponent 32 is too large for 32-bit type 'int' (solution.cpp)
+//下面的方式导致TLE
+class Solution {
+public:
+    int hammingDistance(int x, int y) {
+      int cnt = 0, n = x^y;
+      int k = 0;
+      int v = pow(2,k);
+      while(v<=n){
+        if(n & v)cnt++; 
+	k++;
+	v = pow(2,k);
+      }
+      return cnt;
+    }
+};
+680142203
+1111953568 这个case在pow(2,k)double转为int时while一直不退出
+meshod2:
+1111 1110 1100 1000
+1110 1101 1011 0111
 ** TODO e543. Diameter of Binary Tree
 DFS
 2BFS
