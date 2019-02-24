@@ -219,12 +219,10 @@ bool canJump(int* nums, int numsSize) {
     int pos = 0;
     for(int i = 0; i < numsSize; i++){
         if(numsSize-1 == i) {
-            printf("true");
             return true;
         }
         if(nums[i] == 0){
             if(i - pos >= len) {//遇到0这个坑时判断能否跳过
-                printf("false");
                 return false;
             }
         }
