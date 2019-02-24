@@ -15,6 +15,8 @@ if your method changes when you write the code, delete the old method code all, 
 mc02lwl Lsj 6903
 
 using namespace std;
+** TODO m3. Longest Substring Without Repeating Characters
+>sliding window
 ** h4 https://leetcode.com/problems/median-of-two-sorted-arrays/
 
 double min(double d1, double d2){
@@ -202,6 +204,8 @@ dp[i][j] means s[first i char] matchs with p[first j chars]: only true or false
                               dp[i][j] = dp[i-1][j]    //in this case, a* counts as multiple a 
                            or dp[i][j] = dp[i][j-1]   // in this case, a* counts as single a
                            or dp[i][j] = dp[i][j-2]   // in this case, a* counts as empty
+** e14. Longest Common Prefix
+
 ** h25 https://leetcode.com/problems/reverse-nodes-in-k-group/
 ** TODO h37 https://leetcode.com/problems/sudoku-solver/
 ** h41 https://leetcode.com/problems/first-missing-positive/
@@ -209,6 +213,28 @@ put each num at its right pos. don't care about 0 and negatives.
 ** h42 https://leetcode.com/problems/trapping-rain-water/
 ** TODO h44 https://leetcode.com/problems/wildcard-matching/
 
+** m55. Jump Game
+bool canJump(int* nums, int numsSize) {
+    int len = 0;
+    int pos = 0;
+    for(int i = 0; i < numsSize; i++){
+        if(numsSize-1 == i) {
+            printf("true");
+            return true;
+        }
+        if(nums[i] == 0){
+            if(i - pos >= len) {//遇到0这个坑时判断能否跳过
+                printf("false");
+                return false;
+            }
+        }
+        if(nums[i]+i-pos > len){//贪心:计算往右能走最长多远
+            len = nums[i];
+            pos = i;
+        }
+    }
+    return true;
+}
 ** M62 https://leetcode.com/problems/unique-paths/
 f[m,n]=f[m,n-1]+f[m-1,n]
 class Solution {
@@ -328,6 +354,10 @@ the most important thing is to find out sub problems
 
 in order traverse: left smaller, right bigger. find the 2 wrong number.the 2 number may be next to each other.
 can preoder work?
+** TODO e101. Symmetric Tree
+>in-order sort, then cmp
+>resusive
+>iterative: two queue
 ** e108. Convert Sorted Array to Binary Search Tree
 class Solution {
     public TreeNode buildBST(int[] nums, int low, int high){
@@ -563,8 +593,9 @@ void partition(ListNode * l, ListNode * r, ListNode *& r1, ListNode *& l2){
 }
 };
 
-** TODO ei155. Min Stack
-
+** TODO e155. Min Stack
+use more space to acheive O(1) min function.
+when x<min, push(min) and push(x) 
 ** e169. Majority Element
 cnt=0 or > 0
 0 从新开始
@@ -768,6 +799,8 @@ public:
     return v[n];
   }
 };
+** e283. Move Zeroes
+
 ** DONE 295. Find Median from Data Stream
 [2,3,4]
 [1,2]
@@ -1786,27 +1819,6 @@ vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
 //2 0 0
 //5 0 0 0 0 2 0
 //3 0 2 0 1 
-** bool canJump(int* nums, int numsSize) {
-    int len = 0;
-    int pos = 0;
-    for(int i = 0; i < numsSize; i++){
-        if(numsSize-1 == i) {
-            printf("true");
-            return true;
-        }
-        if(nums[i] == 0){
-            if(i - pos >= len) {
-                printf("false");
-                return false;
-            }
-        }
-        if(nums[i]+i-pos > len){
-            len = nums[i];
-            pos = i;
-        }
-    }
-    return true;
-}
 
 //dp:down to up
 //"()(()"
