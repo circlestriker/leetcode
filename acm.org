@@ -214,7 +214,7 @@ put each num at its right pos. don't care about 0 and negatives.
 ** TODO h44 https://leetcode.com/problems/wildcard-matching/
 
 ** m55. Jump Game
-bool canJump(int* nums, int numsSize) {
+bool canJump(int* nums, int numsSize) {//beats 100%
     int len = 0;
     int pos = 0;
     for(int i = 0; i < numsSize; i++){
@@ -1165,6 +1165,9 @@ public:
        s.push(i);
     }
 };
+** TODO m378. Kth Smallest Element in a Sorted Matrix
+only need to check the top-left k*k matrix // maybe k > n, so this thinking is wrong
+>max heap:klgk+k*(k-1)*lgk
 ** TODO e350. Intersection of Two Arrays II
 
 ** TODO h403. Frog Jump
