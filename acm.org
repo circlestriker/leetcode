@@ -18,10 +18,12 @@ using namespace std;
 ** TODO m3. Longest Substring Without Repeating Characters
 >sliding window
 ** h4 https://leetcode.com/problems/median-of-two-sorted-arrays/
+返回中位数
 
 double min(double d1, double d2){
     return d1<d2?d1:d2;
 }
+//two array as a whole, then find the kTH value
 double kthNum(int * p1, int start1, int end1, int * p2, int start2, int end2, int k){
   if(start1 > end1) return p2[start2+k-1];
   if(start2 > end2) return p1[start1+k-1];
@@ -30,12 +32,13 @@ double kthNum(int * p1, int start1, int end1, int * p2, int start2, int end2, in
   int half1 = (start1+half-1 > end1) ? INT_MAX : p1[start1+half-1];
   int half2 = (start2+half-1 > end2) ? INT_MAX : p2[start2+half-1];
   if(half1 < half2){
-    return kthNum(p1, start1+half, end1, p2, start2, end2, k-half);
+    return kthNum(p1, start1+half, end1, p2, start2, end2, k-half); //throw away the smaller half(k/2 values) each time.
   }else{
     return kthNum(p1, start1, end1, p2, start2+half, end2, k-half);
   }
 }
 
+//nearly 2lgN
 double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
   int len = nums1Size + nums2Size;
   if(len % 2 == 0){
@@ -95,6 +98,7 @@ class Solution {
 middle index in num1 is idx1
 middle index in num2 is idx2
 if num1[idx1] <= num2[idx2], throw the left part of num1 and the right part of num2. and make sure the thrown left and right part has the same count of numbers:len=min(smaller left part, bigger right part)
+
 方法1:每次丢掉最小的和最大的1/4, 可能在同个数组里, 复杂度也是lgM+lgN.
 方法2:每次丢掉num1的小的1/4,和num2大的1/4, 通过比较考虑中间数的去留.
 [1 2 3 4], idx1=1, left part is (1 2)
@@ -1749,6 +1753,23 @@ public:
     return min;
   }
 };
+** e2206
+
+class Solution {
+    public boolean divideArray(int[] nums) {
+        Map<Integer, Integer> m = new HashMap<>();
+        for(int i = 0; i < nums.length; i++){
+            if(m.containsKey(nums[i])){
+                m.remove(nums[i]);
+            }
+            else{
+                m.put(nums[i], i);
+            }
+        }
+        return m.size()==0;
+    }
+}
+
 *** note
 f can be removed, just use A.
 min({1,2,3}) == 1
