@@ -1349,6 +1349,24 @@ native组件是指web组件, 不是原生iOS组件
 *** Flutter
 性能无限接近原生
 相较于RN和Weex使用Javascript作为编程语言与使用平台自身引擎渲染界面不同，Flutter直接选择2D绘图引擎库skia来渲染界面。
+** hook
+什么是hook:改变程序执行的流程就是hook.
+*** iOS hook的几种方式:
+> method swizzle
+SEL(方法编号)->IMP(方法实现)
+method_exchangeImplementations
+iPhoneQQ: 文件消息作为消息入库,调用了一个函数saveMsgDb; hook后我们先调用saveFileMsgDb到fileDB, 再调用saveMsgDb的逻辑.
+为何不直接替换函数:替换要动QQ基础组的代码; 在某些场景要hook, 某些场景不需要。故hook是更好的选择。
+> fishHook
+> get和set: method_getImplementation method_setImplementation
+https://www.jianshu.com/p/86a0982398ca
+*** windows的hook
+win系统是事件驱动的。
+截获事件，加上钩子，就是hook。
+比如截获某个程序的键盘输入事件，可以获取用户在这个程序的输入比如密码等。
+*** emacs的hook
+在某个函数执行完后，加上自己想要的行为。
+比如某个函数原来只是炒菜，可以hook后加上"端上饭桌"的行为。
 * network
 syn后都需要ack。故需要3次握手。
 如果只有2次握手: A 连接 B, B ack A后两边即进入established状态。
