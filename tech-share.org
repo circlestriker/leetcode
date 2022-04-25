@@ -1,0 +1,172 @@
+* cpp
+** C++实现观察者模式
+需要定义最多有多少观察者:
+#define MAX_WATCHER_SIZE 300
+
+
+定义模板类:
+
+template <class Type, class Wather> class WatchHelper: public virtual Typte
+Type是被观察者要实现的接口，Wather是观察者要实现的接口。
+protected:
+	watcher_t* watchers[MAX_WATCHER_SIZE];
+
+使用:
+class CMyGroupsList://被观察者(通知者)
+	public IMyGroupList,
+	public WatchHelper<IMyGrpListWatchBase, IMyGrpListWatcher>, // notify watchers
+
+
+struct IMyGrpListWatchBase //被观察者接口
+{
+	virtual void watch(IMyGrpListWatcher *) = 0; //watch时是被观察者把观察者加入watch[]数组, 这个名字取得不是太好, beWatched合场景些。
+	virtual void revoke(IMyGrpListWatcher *) = 0;
+};
+
+struct IMyGroupList: //被观察者接口
+	public virtual IGrpListWatchBase{
+
+
+struct IMyGrpListWatcher //观察者接口
+{
+	// *************** my group list *************
+	// 自己新建了群
+	virtual void onNewGroup(uint32_t uGroupId, uint32_t uResCode) = 0;
+	
+	// 被拉进某群
+	virtual void onAddedInGroup(uint32_t uGroupId, uint32_t uResCode) = 0;
+	
+
+// GTopic是一个观察者(被通知者)，观察到新建了一个群，就创建一个默认的主题
+void GTopic::onNewGroup(uint32_t uGroupId){
+  log(Info, "[ GTopic::onNewGroup]: create a default topic for a new group:%d!",uGroupId);	
+  this->createGTopic(uGroupId,uGroupId,"Welcome group!");
+}
+
+
+看看GTopic的定义:
+		class GTopic :
+			public glist::IMyGrpListWatcher
+
+被观察者(通知者)在合适场景通知观察者:			
+forEachWatcher2(&IMyGrpListWatcher::onNewGroup, uGroupId, (uint32_t)RES_EREQUEST); 
+forEachWatcher2(&IMyGrpListWatcher::onAddGroup, uGroupId, (uint32_t)RES_EREQUEST); 
+
+forEachWatcher2可以这样实现:
+//2表示被通知触发的函数共2个参数。第一个参数是函数指针
+template<typename U, typename V> void forEachWatcher2(void (W::*fun)(U, V), U param, V p2){
+	for(int i = 0; i < MAX_WATCHER_SIZE; ++i){
+		if(watchers[i] != NULL)
+			(watchers[i]->*fun)(param, p2);
+	}
+}
+
+
+todo:何时调用watch的?
+** DONE 模板类的二阶段名称查找
+===> Making all in corelib...
+make[1]: Entering directory `/home/dev/cpp/server-cpp/common/core/corelib'
+g++ -Wall -ggdb -D_REENTRANT -DHAVE_EPOLL -I../../ -I../../common -c -o InnerConn.o InnerConn.cpp
+In file included from InnerConn.h:10:0,
+                 from InnerConn.cpp:1:
+../../core/sox/sockbuffer.h: In instantiation of ‘int sox::SockBuffer<BlockBufferClass, FilterClass>::pump(sox::Sockethelper&, size_t) [with\
+ BlockBufferClass = sox::BlockBuffer<sox::default_block_allocator_malloc_free<8192u>, 1024u>; FilterClass = core::RC4Filter; size_t = long u\
+nsigned int]’:
+InnerConn.cpp:69:28:   required from here
+../../core/sox/sockbuffer.h:65:26: error: ‘filterRead’ was not declared in this scope, and no declarations were found by argument-dependent \
+lookup at the point of instantiation [-fpermissive]
+    filterRead(tail(), ret); //这里加this, 将filterRead推迟到第二阶段进行解析，即FilterClass模板参数确定之后。
+                          ^
+../../core/sox/sockbuffer.h:65:26: note: declarations in dependent base ‘core::RC4Filter’ are not found by unqualified lookup
+../../core/sox/sockbuffer.h:65:26: note: use ‘this->filterRead’ instead
+make[1]: *** [InnerConn.o] Error 1
+make[1]: Leaving directory `/home/dev/cpp/server-cpp/common/core/corelib'
+make: *** [all-recursive] Error 2
+
+
+template<class T> class List  
+{
+        public: 
+        void next(T*){
+            cout<<"Doing some stuff"<<endl;
+        }       
+};
+
+template<class T> class Special_List: public List<T>
+{
+    public:
+        void do_other_stuff(T* item){
+                next(item);
+        }       
+};
+
+
+int main(int argc, char *argv[])
+{
+    Special_List<int> b;
+    int test_int = 3;
+    b.do_other_stuff(&test_int);
+}
+
+template_eg.cpp: In instantiation of 'void Special_List<T>::do_other_stuff(T*) [with T = int]':
+template_eg.cpp:27:35:   required from here
+template_eg.cpp:18:25: error: 'next' was not declared in this scope, and no declarations were found by argument-dependent lookup at the point of instantiation [-fpermissive]
+template_eg.cpp:18:25: note: declarations in dependent base 'List<int>' are not found by unqualified lookup
+template_eg.cpp:18:25: note: use 'this->next' instead
+
+https://stackoverflow.com/questions/10639053/name-lookups-in-c-templates
+
+二阶段名称查找
+https://blog.llvm.org/2009/12/dreaded-two-phase-name-lookup.html
+
+
+* network
+** UDP实现可靠传输(自定义tcp)
+*** 背景
+tcp实现在操作系统中，只能用系统提供的接口调整参数，难以根据业务场景改进和定制。
+tcp的nat穿越也比较困难，一些p2p的网络打洞只能使用udp，就有了在udp上实现可靠传输的需求。
+
+UDP是无连接的、不可靠的、面向报文的协议。
+基于upd做可靠传输需要解决可靠、有序性等问题。
+
+传文件、音视频等业务需要udp可靠传输。
+
+
+*** 滑动窗口
+接收方控制发送方的方式速率(流量控制)
+
+
+*** 拥塞控制
+
+-    慢启动
+
+
+-    拥塞回避
+
+-    快重传
+发送方如果收到连续3次重复的ACK确认(发送方新发出去的包一直未收到ack)，就认为出现了丢包，而不需要等到重传计时器超时。这样可以更早的检测到丢包，提高算法效率。
+
+-   快恢复
+较新的拥塞算法Reno在检测到丢包后，直接进入拥塞回避阶段，将窗口大小调整为原来的一半，避免了慢启动的开销。
+
+**** 拥塞算法分类
+- 基于丢包
+主流算法
+
+需要计算丢包率，并基于不同层级的丢包率来设计退避策略。
+
+- 基于延时
+现在的路由器和交换机的缓存比较大，对于超出负载的报文会先缓存起来，而不是立即丢弃。
+基于丢包的算法就不能及时发现网络拥塞，于是基于延时的算法应运而生。
+
+但是基于延时的算法，太早退避，牺牲了传输性能和公平性。
+大家一起抢带宽，脸皮越厚越迟退避，抢到带宽越多。
+故基于延时的算法还未广泛应用。
+
+Google新推出的BBR算法，虽然也可以归为基于延时类的，但跟传统算法有较大区别。
+传统算法通过AIMD来逼近理想传输速度，效率较低，而且受丢包和抖动的影响较大。
+BBR通过RTT和带宽乘积(BDP)来作为调整发送窗口的基础，避免了这些问题，从而提高性能和避免拥塞。
+(应该是RTT/2 * 带宽，网络连接相当于水管，此乘积计算水管里满水时的体积大小，超出就会溢出，即拥塞丢包)
+
+事先不知道带宽，如何进行带宽估计?
+一种方法还是根据丢包情况来估计。
